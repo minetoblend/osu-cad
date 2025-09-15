@@ -15,3 +15,4 @@ export * from "./EditorColors";
 export * from "./userInterface";
 export * from "./IBeatSyncProvider" ;
 export * from "./utils";
+export * from "./hotkeys";

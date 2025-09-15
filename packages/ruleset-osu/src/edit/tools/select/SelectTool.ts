@@ -1,15 +1,13 @@
 import { type HitObject } from "@osucad/core";
-import { ComposeTool, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
-import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Bindable, BoundsBuilder, DependencyContainer, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
+import type { HotkeyKeyBindingEvent } from "@osucad/editor";
+import { ComposeTool, HitObjectComposer, HitObjectSelection, Hotkeys } from "@osucad/editor";
+import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Bindable, BoundsBuilder, DependencyContainer, dependencyLoader, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
 import type { SnapResult } from "../../../edit/SnapProvider";
 import { type OsuHitObject, Slider, Spinner } from "../../../hitObjects";
 import { OsuEditorAction } from "../../OsuEditorAction";
 import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
-import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
-import { SelectBox } from "./SelectBox";
-import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { OsuPlayfield } from "../../../ui";
 import { MoveOperator } from "../../operators/MoveOperator";
 import { RotateOperator } from "../../operators/RotateOperator";
@@ -21,6 +19,8 @@ import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer
 import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { RotateInteraction } from "../../interactions/RotateInteraction";
 import { SelectToolPresenceOverlay } from "./SelectToolPresenceOverlay";
+import iconUrl from "./icon.png";
+import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
@@ -28,7 +28,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   @resolved(HitObjectSelection)
   public accessor selection!: HitObjectSelection<OsuHitObject>;
 
-  public selectionContainer!: OsuSelectionBlueprintContainer;
+
 
   public snapProvider = new HitObjectSnapProvider();
 
@@ -42,16 +42,8 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   @dependencyLoader()
   #load()
   {
-    this.#dependencies.provide(
-        SelectionBlueprintContainer,
-        this.selectionContainer = new OsuSelectionBlueprintContainer(this.selection),
-    );
-
     this.addRangeInternal([
       this.snapProvider,
-      new SelectBox(),
-      this.createPlayfieldAdjustmentContainer()
-        .withChild(this.selectionContainer),
     ]);
   }
 
@@ -75,6 +67,9 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     });
   }
 
+  @resolved(OsuSelectionBlueprintContainer)
+  accessor #selectionContainer!: OsuSelectionBlueprintContainer
+
   protected override update()
   {
     super.update();
@@ -84,7 +79,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     let slider = hoveredSliders.find(it => it.selected)?.hitObject;
     if (!slider)
     {
-      const selectedSliders = [...this.selectionContainer.allBlueprints.filter(it => it.selected && it.hitObject instanceof Slider)];
+      const selectedSliders = [...this.#selectionContainer.allBlueprints.filter(it => it.selected && it.hitObject instanceof Slider)];
       if (selectedSliders.length === 1)
         slider = selectedSliders[0].hitObject as Slider;
 
@@ -187,22 +182,6 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  public onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean
-  {
-    switch (e.pressed)
-    {
-    case PlatformAction.SelectAll:
-      this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
-      return true;
-    case PlatformAction.Delete:
-      this.hitObjects.removeRange(this.selection);
-      this.history.commit();
-      return true;
-    }
-
-    return false;
-  }
-
   @resolved(HitObjectComposer)
   accessor #composer!: HitObjectComposer;
 
@@ -219,7 +198,20 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     this.#composer.beginOperator(MoveOperator, [...this.selection] as OsuHitObject[], new Vec2(x, y));
   }
 
-  @keyBindingHandler(OsuEditorAction.ToggleNewCombo)
+  @Hotkeys.keyBinding(PlatformAction.SelectAll)
+  public selectAll()
+  {
+    this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
+  }
+
+  @Hotkeys.keyBinding(PlatformAction.Delete)
+  public deleteSelection()
+  {
+    this.hitObjects.removeRange(this.selection);
+    this.history.commit();
+  }
+
+  @Hotkeys.keyBinding(OsuEditorAction.ToggleNewCombo)
   public toggleNewCombo()
   {
     const objects = [...this.selection];
@@ -237,14 +229,15 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @keyBindingHandler([OsuEditorAction.NudgeForward, OsuEditorAction.NudgeBackward])
-  #nudgeForward(e: KeyBindingPressEvent<OsuEditorAction>)
+  @Hotkeys.keyBinding(OsuEditorAction.NudgeForward)
+  @Hotkeys.keyBinding(OsuEditorAction.NudgeBackward)
+  #nudgeStartTime(e: HotkeyKeyBindingEvent)
   {
     const objects = [...this.selection];
     if (objects.length === 0)
       return true;
 
-    const direction = e.pressed === OsuEditorAction.NudgeForward ? 1 : -1;
+    const direction = e.action === OsuEditorAction.NudgeForward ? 1 : -1;
 
     const firstObjectTime = Math.min(...objects.map(it => it.startTime));
 
@@ -264,30 +257,28 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @keyBindingHandler(OsuEditorAction.MoveSelection)
+  @Hotkeys.keyBinding(OsuEditorAction.MoveSelection)
   #moveSelection()
   {
     if (this.selection.size > 0)
-      this.#composer.beginInteraction(new MoveInteraction());
+      void this.push(new MoveInteraction());
 
     return true;
   }
 
-  @keyBindingHandler(OsuEditorAction.Rotate)
+  @Hotkeys.keyBinding(OsuEditorAction.Rotate)
   #rotate()
   {
     if (this.selection.size > 0)
-      this.#composer.beginInteraction(new RotateInteraction());
+      this.toolContainer.push(new RotateInteraction());
 
     return true;
   }
 
-  @keyBindingHandler(OsuEditorAction.NudgePosition)
-  #nudgeSelection(event: KeyBindingPressEvent<OsuEditorAction.NudgePosition>)
+  @Hotkeys.keyBinding(OsuEditorAction.NudgePosition)
+  #nudgeSelection(event: HotkeyKeyBindingEvent<OsuEditorAction.NudgePosition>)
   {
-    this.nudgeSelection(event.pressed.x, event.pressed.y);
-
-    return true;
+    this.nudgeSelection(event.action.x, event.action.y);
   }
 
   public rotateSelection(angle: number, center: Vec2)
@@ -311,10 +302,10 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     this.history.commit();
   }
 
-  @keyBindingHandler(OsuEditorAction.RotateSelection)
-  #rotateSelection(e: KeyBindingPressEvent<OsuEditorAction.RotateSelection>)
+  @Hotkeys.keyBinding(OsuEditorAction.RotateSelection)
+  #rotateSelection(e: HotkeyKeyBindingEvent<OsuEditorAction.RotateSelection>)
   {
-    const { angleDegrees, origin } = e.pressed;
+    const { angleDegrees, origin } = e.action;
 
     this.#composer.beginOperator(RotateOperator, [...this.selection], {
       angleDegrees,
@@ -324,7 +315,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @keyBindingHandler(OsuEditorAction.FlipHorizontal)
+  @Hotkeys.keyBinding(OsuEditorAction.FlipHorizontal)
   public flipHorizontal()
   {
     this.#composer.beginOperator(FlipOperator, [...this.selection], { horizontal: true });
@@ -332,7 +323,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @keyBindingHandler(OsuEditorAction.FlipVertical)
+  @Hotkeys.keyBinding(OsuEditorAction.FlipVertical)
   public flipVertical()
   {
     this.#composer.beginOperator(FlipOperator, [...this.selection], { vertical: true });
@@ -340,7 +331,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @keyBindingHandler(OsuEditorAction.ReverseSelection)
+  @Hotkeys.keyBinding(OsuEditorAction.ReverseSelection)
   public reverseSelection()
   {
     this.#composer.beginOperator(ReverseOperator, [...this.selection]);
@@ -389,8 +380,6 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     }
   }
 }
-
-import iconUrl from "./icon.png";
 
 export namespace SelectTool
 {

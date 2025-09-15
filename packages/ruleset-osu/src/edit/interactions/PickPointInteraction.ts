@@ -1,11 +1,11 @@
 import { Playfield } from "@osucad/core";
-import { EditorColors, ModalInteraction } from "@osucad/editor";
-import { Anchor, Axes, Box, Container, dependencyLoader, resolved, type Drawable, type InputManager, type Vec2 } from "@osucad/framework";
+import { EditorColors, Hotkeys, ModalComposeTool } from "@osucad/editor";
+import { Anchor, Axes, Box, Container, dependencyLoader, type Drawable, type InputManager, resolved, type Vec2 } from "@osucad/framework";
 import { SnapManager } from "../SnapManager";
 
-export class PickPointInteraction extends ModalInteraction<Vec2>
+export class PickPointInteraction extends ModalComposeTool<Vec2>
 {
-  public override result: Vec2 | undefined = undefined;
+  public result: Vec2 | undefined = undefined;
 
   #inputManager!: InputManager;
 
@@ -71,5 +71,19 @@ export class PickPointInteraction extends ModalInteraction<Vec2>
     this.result = this.snapTargetAtMousePosition.position;
 
     this.#cursor.position = this.#playfield.toSpaceOfOtherDrawable(this.result, this);
+  }
+
+  @Hotkeys.key("MouseLeftButton")
+  @Hotkeys.key("Enter")
+  #complete()
+  {
+    this.complete(this.result);
+  }
+
+  @Hotkeys.key("MouseRightButton")
+  @Hotkeys.key("Escape")
+  #cancel()
+  {
+    this.cancel();
   }
 }

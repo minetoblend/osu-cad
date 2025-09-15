@@ -1,7 +1,8 @@
 import { Playfield } from "@osucad/core";
-import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Interaction } from "@osucad/editor";
+import type { ComposeTool, HotkeyKeyEvent } from "@osucad/editor";
+import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import type { InputManager, KeyDownEvent, MouseMoveEvent } from "@osucad/framework";
-import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, InputKey, Key, keyBindingHandler, MouseButton, PlatformAction, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, InputKey, Key, MouseButton, PlatformAction, resolved, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
 import { MoveOperator } from "../operators/MoveOperator";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
@@ -16,7 +17,7 @@ export interface MoveInteractionOptions
   completeOnMouseUp?: boolean
 }
 
-export class MoveInteraction extends Interaction
+export class MoveInteraction extends ModalComposeTool
 {
   public completeOnMouseUp = false;
 
@@ -59,19 +60,20 @@ export class MoveInteraction extends Interaction
   @resolved(HitObjectComposer)
   accessor #composer!: HitObjectComposer;
 
-  @Interaction.toggleOnKeyDown("Minus")
-  @Interaction.toggleOnKeyDown("KeypadMinus")
+  @Hotkeys.toggle.keyDown("Minus")
+  @Hotkeys.toggle.keyDown("KeypadMinus")
   private readonly negative = new BindableBoolean(false);
 
-  @Interaction.invertOnKey("Shift", "Show Snap Targets")
+  @Hotkeys.toggle.key("Shift")
   private readonly showSnapTargets = new BindableBoolean(false);
 
   private readonly axis = new Bindable<"x" | "y" | null>(null);
 
-  @Interaction.invokeOnKey({ or: ["X", "Y"] }, "Axis")
-  private toggleAxis(key: InputKey)
+  @Hotkeys.key("X")
+  @Hotkeys.key("Y")
+  #toggleAxis(event: HotkeyKeyEvent)
   {
-    const axis = key === InputKey.X ? "x" : "y";
+    const axis = event.key === InputKey.X ? "x" : "y";
 
     this.axis.value = this.axis.value !== axis
         ? axis
@@ -79,7 +81,7 @@ export class MoveInteraction extends Interaction
   }
 
 
-  @Interaction.invokeOnKey("B", "Pick Snap Targets")
+  @Hotkeys.key("B")
   private pickSnapTargets()
   {
     this.history.discardUncommittedChanges();
@@ -92,18 +94,18 @@ export class MoveInteraction extends Interaction
       for (const p of this.#snapTargets)
         this.#snapTargetContainer.addMarker(p);
 
-      this.#mousePosition = this.#playfield.toLocalSpace(this.getContainingInputManager()!.currentState.mouse.position);
+      this.#mousePosition = this.#playfield.toLocalSpace(this.#inputManager.currentState.mouse.position);
       this.#inputString = "";
 
       this.invalidateState();
     });
   }
 
-  @Interaction.toggleOnKeyDown("T", "Grid Snap")
-  @Interaction.invertOnKey("Control", "Grid Snap Invert")
+  @Hotkeys.toggle.keyDown("T")
+  @Hotkeys.toggle.key("Control")
   private readonly snapped = new BindableBoolean(false);
 
-  @Interaction.invertOnKey("Shift", "Precision Mode")
+  @Hotkeys.toggle.key("Shift")
   private readonly preciseMode = new BindableBoolean(false);
 
 
@@ -183,7 +185,7 @@ export class MoveInteraction extends Interaction
     return super.onKeyDown(e);
   }
 
-  @keyBindingHandler(PlatformAction.DeleteBackwardChar)
+  @Hotkeys.keyBinding(PlatformAction.DeleteBackwardChar)
   private removeLastCharacter()
   {
     this.invalidateState();
@@ -191,9 +193,6 @@ export class MoveInteraction extends Interaction
 
   protected override onMouseMove(e: MouseMoveEvent): boolean
   {
-    if (!this.screenStack?.isCurrentScreen(this))
-      return true;
-
     const newPosition = this.#playfield.toLocalSpace(e.screenSpaceMousePosition);
 
     let delta = newPosition.sub(this.#mousePosition);
@@ -378,10 +377,40 @@ export class MoveInteraction extends Interaction
     return value.toFixed(1);
   }
 
-  protected override onComplete()
+  @Hotkeys.key("MouseLeftButton")
+  @Hotkeys.key("Enter")
+  #complete()
   {
+    this.complete();
+  }
+
+  @Hotkeys.key("MouseRightButton")
+  @Hotkeys.key("Escape")
+  #cancel()
+  {
+    this.cancel();
+  }
+
+  public override onEntering(previous?: ComposeTool)
+  {
+    super.onEntering(previous);
+
+    this.history.commit();
+  }
+
+  protected override onCompleted()
+  {
+    super.onCompleted();
+
     this.history.discardUncommittedChanges();
 
     this.#composer.beginOperator(MoveOperator, [...this.#selection], this.#lastDelta);
+  }
+
+  protected override onCanceled()
+  {
+    super.onCanceled();
+
+    this.history.discardUncommittedChanges();
   }
 }

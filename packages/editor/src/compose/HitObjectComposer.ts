@@ -1,11 +1,8 @@
-import { ISamplePlaybackDisabler } from "@osucad/core";
-import { DrawableRuleset, Playfield, Ruleset } from "@osucad/core";
+import { DrawableRuleset, ISamplePlaybackDisabler, Playfield, Ruleset } from "@osucad/core";
 import type { KeyDownEvent, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Bindable } from "@osucad/framework";
-import { Anchor, asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
+import { Anchor, asyncDependencyLoader, Axes, Bindable, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
 import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
-import type { Interaction } from "./interactions/Interaction";
 import type { Operator, OperatorContext } from "./operators";
 import { OperatorBox } from "./operators/OperatorBox";
 import type { ComposeToolInfo } from "./tools";
@@ -13,7 +10,6 @@ import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";
 import { ComposeToolContainer } from "./tools/ComposeToolContainer";
 import { ComposePresenceContainer } from "./tools/ToolPresenceContainer";
-import { InteractionContainer } from "./interactions/InteractionContainer";
 
 @provideSelf()
 export abstract class HitObjectComposer extends CompositeDrawable implements ISamplePlaybackDisabler
@@ -70,13 +66,11 @@ export abstract class HitObjectComposer extends CompositeDrawable implements ISa
 
     this.internalChildren = [
       this.composeToolContainer = new ComposeToolContainer(),
-      this.#interactionContainer = new InteractionContainer(),
       this.rulesetContainer = new Container({
         relativeSizeAxes: Axes.Both,
         child: this.drawableRuleset,
       }),
       new ProxyDrawable(this.composeToolContainer),
-      new ProxyDrawable(this.#interactionContainer),
       new ComposePresenceContainer(),
       new Container({
         relativeSizeAxes: Axes.Y,
@@ -88,6 +82,8 @@ export abstract class HitObjectComposer extends CompositeDrawable implements ISa
         child: this.#toolbar = new ComposeToolbar(),
       }),
     ];
+
+    this.#dependencies.provide(ComposeToolContainer, this.composeToolContainer);
 
     const tools = this.tools = this.getTools();
     this.activeTool.value = tools[0];
@@ -150,35 +146,12 @@ export abstract class HitObjectComposer extends CompositeDrawable implements ISa
 
   #activeOperator?: Operator;
   #activeOperatorBox?: OperatorBox;
-  #activeInteraction?: Interaction;
 
   public get activeOperator()
   {
     return this.#activeOperator;
   }
 
-  #interactionContainer!: InteractionContainer;
-
-  public get activeInteraction()
-  {
-    return this.#interactionContainer.currentScreen as Interaction | null;
-  }
-
-  public beginInteraction(interaction: Interaction)
-  {
-    this.completeActiveOperator();
-    this.completeActiveInteraction();
-
-    this.#interactionContainer.exitAll();
-    this.#interactionContainer.push(interaction);
-  }
-
-  public completeActiveInteraction()
-  {
-    this.#activeInteraction?.complete();
-    this.#activeInteraction?.expire();
-    this.#activeInteraction = undefined;
-  }
 
   public beginOperator<T extends Operator, Args extends unknown[]>(operatorClass: new (context: OperatorContext, ...args: Args) => T, ...args: Readonly<Args>)
   {
@@ -207,7 +180,6 @@ export abstract class HitObjectComposer extends CompositeDrawable implements ISa
     }
 
     this.completeActiveOperator();
-    this.completeActiveInteraction();
 
     this.#activeOperator = operator;
 

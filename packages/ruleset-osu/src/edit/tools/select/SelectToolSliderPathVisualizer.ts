@@ -111,7 +111,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 
   protected override update()
   {
-    if (this.#inputManager.currentState.keyboard.controlPressed && !this.#composer.activeInteraction)
+    if (this.#inputManager.currentState.keyboard.controlPressed)
     {
       this.#updateInsertionIndex();
 

@@ -1,11 +1,13 @@
 import { type ComposeToolInfo, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
-import { asyncDependencyLoader, provide, resolved } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { asyncDependencyLoader, DependencyContainer, provide, resolved } from "@osucad/framework";
 import type { OsuHitObject } from "../hitObjects";
 import { PlayfieldGrid } from "./PlayfieldGrid";
 import { HitCircleTool } from "./tools/circle/HitCircleTool";
 import { SelectTool } from "./tools/select/SelectTool";
 import { SliderTool } from "./tools/slider/SliderTool";
 import { SnapManager } from "./SnapManager";
+import { OsuSelectionBlueprintContainer } from "./tools/select/OsuSelectionBlueprintContainer";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -26,15 +28,35 @@ export class OsuHitObjectComposer extends HitObjectComposer
     ];
   }
 
+  public selectionContainer!: OsuSelectionBlueprintContainer;
+
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer
+  {
+    return this.#dependencies = new DependencyContainer(super.createChildDependencies(parentDependencies));
+  }
+
   @asyncDependencyLoader()
   async #load()
   {
     this.addInternal(this.snapManager);
 
-    this.rulesetContainer.add(this.drawableRuleset.createPlayfieldAdjustmentContainer().with({
-      depth: 1,
-      child: new PlayfieldGrid(),
-    }));
+    this.rulesetContainer.addRange([
+      this.drawableRuleset.createPlayfieldAdjustmentContainer().with({
+        depth: Number.MAX_VALUE,
+        child: new PlayfieldGrid(),
+      }),
+    ]);
+
+    this.addInternal(
+        this.drawableRuleset.createPlayfieldAdjustmentContainer().with({
+          child: this.selectionContainer = new OsuSelectionBlueprintContainer(this.#selection),
+          depth: 1,
+        }),
+    );
+
+    this.#dependencies.provide(OsuSelectionBlueprintContainer, this.selectionContainer);
   }
 
   @resolved(HitObjectSelection)
@@ -46,8 +68,15 @@ export class OsuHitObjectComposer extends HitObjectComposer
 
     this.activeTool.bindValueChanged(tool =>
     {
-      if (!(tool.value instanceof SelectTool))
+      if (!(tool.value === SelectTool))
+      {
+        this.selectionContainer.hide();
         this.#selection.clear();
-    });
+      }
+      else
+      {
+        this.selectionContainer.show();
+      }
+    }, true);
   }
 }

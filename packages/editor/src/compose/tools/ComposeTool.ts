@@ -1,12 +1,14 @@
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import type { InputManager, MouseButton } from "@osucad/framework";
-import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
+import { Axes, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 import { ComposeToolContainer } from "./ComposeToolContainer";
+import { HotkeyContainer } from "../../hotkeys/HotkeyContainer";
+import type { ModalComposeTool } from "./ModalComposeTool";
 
-export abstract class ComposeTool extends CompositeDrawable
+export abstract class ComposeTool extends HotkeyContainer
 {
   @dependencyLoader()
   #load()
@@ -42,7 +44,12 @@ export abstract class ComposeTool extends CompositeDrawable
   protected accessor history!: EditorHistory
 
   @resolved(ComposeToolContainer)
-  accessor #toolContainer!: ComposeToolContainer
+  protected accessor toolContainer!: ComposeToolContainer
+
+  public override get removeWhenNotAlive(): boolean
+  {
+    return false;
+  }
 
   protected get screenSpaceMousePosition()
   {
@@ -76,6 +83,32 @@ export abstract class ComposeTool extends CompositeDrawable
 
   public recreate()
   {
-    this.#toolContainer.refresh();
+    this.toolContainer.refresh();
+  }
+
+  public onEntering(previous?: ComposeTool)
+  {
+  }
+
+  public onExiting(next?: ComposeTool)
+  {
+  }
+
+  public onSuspending(next: ComposeTool)
+  {
+  }
+
+  public onResuming(previous: ComposeTool)
+  {
+  }
+
+  protected push<T>(modal: ModalComposeTool<T>): Promise<T | undefined>
+  {
+    return new Promise<T | undefined>((resolve) =>
+    {
+      modal.onComplete.once(resolve);
+
+      this.toolContainer.push(modal);
+    });
   }
 }

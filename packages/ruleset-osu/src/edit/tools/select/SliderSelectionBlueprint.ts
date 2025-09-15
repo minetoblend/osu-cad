@@ -1,6 +1,6 @@
 import type { DrawableHitObject, HitObjectLifetimeEntry } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
-import { HitObjectComposer } from "@osucad/editor";
+import { ComposeToolContainer } from "@osucad/editor";
 import type { DragStartEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import { Color } from "pixi.js";
@@ -139,8 +139,8 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     return this.hitObject.contains(position.add(this.position));
   }
 
-  @resolved(HitObjectComposer)
-    accessor #composer!: HitObjectComposer
+  @resolved(ComposeToolContainer)
+  accessor #toolContainer!: ComposeToolContainer
 
 
   protected override onDragStart(e: DragStartEvent): boolean
@@ -148,7 +148,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     if (!this.selected)
       this.selectExclusive();
 
-    this.#composer.beginInteraction(new MoveInteraction({ completeOnMouseUp: true }));
+    this.#toolContainer.push(new MoveInteraction({ completeOnMouseUp: true }));
 
     return false;
   }
