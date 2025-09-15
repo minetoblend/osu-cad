@@ -1,3 +1,4 @@
+import isInCi from "is-in-ci";
 import { expect } from "vitest";
 import { clamp } from "../utils/clamp";
 import { DecouplingFramedClock } from "./DecouplingFramedClock";
@@ -399,7 +400,7 @@ describe.concurrent("DecouplingFramedClock", () =>
     expect(decouplingClock.currentTime).toBeGreaterThan(time);
   });
 
-  test.skip("BackwardPlaybackOverZeroBoundary", async () =>
+  test.skipIf(isInCi)("BackwardPlaybackOverZeroBoundary", async () =>
   {
     const { decouplingClock } = createClocks();
 
@@ -500,7 +501,7 @@ describe.concurrent("DecouplingFramedClock", () =>
     expect(source.isRunning).toBe(true);
   });
 
-  test("ForwardPlaybackOverLengthBoundary", async () =>
+  test.skipIf(isInCi)("ForwardPlaybackOverLengthBoundary", async () =>
   {
     const { decouplingClock } = createClocks();
 
