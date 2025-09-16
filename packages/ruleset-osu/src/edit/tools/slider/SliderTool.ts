@@ -82,7 +82,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     if (position.distance(lastPoint.position) < 10)
     {
       this.hitObject.controlPoints = [...this.#path];
-      this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
+      this.#updatePathLength();
       return;
     }
 
@@ -92,7 +92,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
       this.applyAutomaticPathType(path);
 
     this.hitObject.controlPoints = path;
-    this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
+    this.#updatePathLength();
 
     let repeatCount = 0;
 
@@ -215,5 +215,13 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   #flashPathType(type: PathType, position: Vec2)
   {
     this.#pathText.flashPathType(type, this.playfield.toScreenSpace(this.hitObject.stackedPosition.add(position)));
+  }
+
+  #updatePathLength()
+  {
+    if (this.inputManager.currentState.keyboard.altPressed)
+      this.hitObject.expectedDistance = this.hitObject.path.calculatedDistance;
+    else
+      this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
   }
 }
