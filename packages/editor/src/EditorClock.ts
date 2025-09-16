@@ -173,10 +173,9 @@ export class EditorClock extends Component implements IFrameBasedClock, IBeatSyn
 
   public processFrame(): void
   {
-
   }
 
-  public readonly isFrameBasedClock = true;
+  public readonly isFrameBasedClock: true = true as const;
 
   public get currentTime(): number
   {
