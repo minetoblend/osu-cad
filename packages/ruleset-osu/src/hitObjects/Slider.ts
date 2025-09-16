@@ -30,6 +30,7 @@ const nodeHitSoundsSerializer = serializer<readonly HitSoundInfo[], [SampleSet, 
 @invalidations({
   repeatCount: ["applyDefaults", "stacking"],
   nodeHitSounds: ["applyDefaults"],
+  velocityOverride: ["applyDefaults", "stacking"],
 })
 export class Slider extends OsuHitObject
 {
@@ -124,19 +125,29 @@ export class Slider extends OsuHitObject
   @bindableBacked("nodeHitSoundsBindable")
   public accessor nodeHitSounds!: readonly HitSoundInfo[]
 
+  @type("float32", { nullable: true })
+  public accessor velocityOverride: number | null = null
+
+  #baseVelocity = 1;
+
+  public get baseVelocity()
+  {
+    return this.#baseVelocity;
+  }
+
   protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
     super.applyDefaultsToSelf(difficulty, controlPoints);
 
     const timingPoint = controlPoints.timingPointAt(this.startTime + 1);
 
-    const baseVelocity = Slider.BASE_SCORING_DISTANCE * difficulty.sliderMultiplier / timingPoint.beatLength;
+    this.#baseVelocity = Slider.BASE_SCORING_DISTANCE * difficulty.sliderMultiplier / timingPoint.beatLength;
 
     const velocityPoint = controlPoints.controlPointAt(SliderVelocityPoint, this.startTime + 1);
 
-    const sliderVelocity = velocityPoint?.velocity ?? 1;
+    const sliderVelocity = this.velocityOverride ?? velocityPoint?.velocity ?? 1;
 
-    this.velocity = baseVelocity * sliderVelocity;
+    this.velocity = this.#baseVelocity * sliderVelocity;
 
     const scoringDistance = this.velocity * timingPoint.beatLength;
 

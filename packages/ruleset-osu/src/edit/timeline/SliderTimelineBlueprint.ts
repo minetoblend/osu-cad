@@ -1,13 +1,12 @@
 import { SkinnableDrawable } from "@osucad/core";
 import { TimelineBlueprint } from "@osucad/editor";
 import type { Drawable } from "@osucad/framework";
-import { Container } from "@osucad/framework";
-import { Anchor, Axes, Box, dependencyLoader, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Box, Container, dependencyLoader, Vec2 } from "@osucad/framework";
 import type { Slider } from "../../hitObjects";
 import { OsuHitObject } from "../../hitObjects";
+import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 import { OsuSkinComponents } from "../../skinning";
 import { OsuTimelineBlueprint } from "./OsuTimelineBlueprint";
-import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 import { TimelineSliderTail } from "./TimelineSliderTail";
 
 export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
@@ -65,6 +64,13 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
       this.#headSelectionOverlay.alpha = selected.value ? 1 : 0;
       this.#tailCircle.selected = selected.value;
     }, true);
+  }
+
+  public override contains(screenSpacePosition: Vec2): boolean
+  {
+    return super.contains(screenSpacePosition)
+        || this.#headSelectionOverlay.contains(screenSpacePosition)
+        || this.#tailCircle.contains(screenSpacePosition);
   }
 
   protected override defaultsApplied(): void

@@ -1,9 +1,10 @@
-import type { DragStartEvent , DragEvent, DragEndEvent } from "@osucad/framework";
+import type { DragStartEvent, DragEvent, DragEndEvent, MouseDownEvent } from "@osucad/framework";
+import { clamp } from "@osucad/framework";
 import { Anchor, Axes, CompositeDrawable, resolved, Vec2 } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning";
 import { OsuHitObject } from "../../hitObjects";
 import { SkinnableDrawable } from "@osucad/core";
-import { ComposeTimeline, EditorHistory, TimelineBlueprint } from "@osucad/editor";
+import { BindableBeatDivisor, ComposeTimeline, EditorBeatmap, EditorHistory, TimelineBlueprint } from "@osucad/editor";
 import type { SliderTimelineBlueprint } from "./SliderTimelineBlueprint";
 
 export class TimelineSliderTail extends CompositeDrawable
@@ -42,6 +43,7 @@ export class TimelineSliderTail extends CompositeDrawable
     this.#selectionOverlay.alpha = value ? 1 : 0;
   }
 
+
   protected override onDragStart(e: DragStartEvent)
   {
     return true;
@@ -50,9 +52,32 @@ export class TimelineSliderTail extends CompositeDrawable
   @resolved(ComposeTimeline)
   accessor #timeline!: ComposeTimeline
 
+  @resolved(EditorBeatmap)
+  accessor #beatmap!: EditorBeatmap
+
+  @resolved(BindableBeatDivisor)
+  private accessor beatDivisor!: BindableBeatDivisor
+
   protected override onDrag(e: DragEvent)
   {
+    this.#history.discardUncommittedChanges();
+
     const time = this.#timeline.timeAtScreenSpacePosition(e.screenSpaceMousePosition);
+
+    if (e.shiftPressed)
+    {
+      const snapped = this.#beatmap.controlPointInfo.snap(time, this.beatDivisor.value);
+
+      const slider = this.blueprint.hitObject;
+
+      const duration = snapped - slider.startTime;
+
+      const velocity = slider.path.distance * slider.spanCount() / slider.baseVelocity / duration;
+      if (Number.isFinite(velocity))
+        slider.velocityOverride = clamp(velocity, 0.1, 10);
+
+      return true;
+    }
 
     const slider = this.blueprint.hitObject;
 
