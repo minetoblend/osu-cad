@@ -1,11 +1,11 @@
+import { Action } from "@osucad/framework";
 import type { DDSAttributes, DDSRef, IDecoder, IEncoder } from "@osucad/multiplayer-core";
 import { DDS, Delta } from "@osucad/multiplayer-core";
 import { nn } from "../../utils";
 import { ControlPoint } from "./ControlPoint";
-import { Action } from "@osucad/framework";
 import { ControlPointList } from "./ControlPointList";
-import { TimingControlPoint } from "./TimingControlPoint";
 import { SampleControlPoint } from "./SampleControlPoint";
+import { TimingControlPoint } from "./TimingControlPoint";
 
 enum OpType
 {
@@ -80,9 +80,14 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 
   public timingPointAt(time: number)
   {
-    const timingPoint = this.timingPoints.controlPointAt(time);
+    return ControlPointInfo.binarySearchWithFallback(this.timingPoints.items, time, this.timingPoints.first ?? TimingControlPoint.Default);
+  }
 
-    return timingPoint ?? TimingControlPoint.Default;
+  public timingPointAfter(time: number)
+  {
+    let index = ControlPointInfo.binarySearch(this.timingPoints.items, time, ControlPointInfo.EqualitySelection.Rightmost);
+    index = index < 0 ? ~index : index + 1;
+    return index < this.timingPoints.length ? this.timingPoints.items[index] : null;
   }
 
   public samplePointAt(time: number)
@@ -92,12 +97,17 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     return timingPoint ?? SampleControlPoint.Default;
   }
 
-  public controlPointAt<T extends ControlPoint>(type: new () => T, time: number): T | undefined
+  public controlPointAt<T extends ControlPoint>(type: new (...args: any[]) => T, time: number): T | undefined
   {
-    return this.#listFor(type, false)?.controlPointAt(time);
+    const list = this.#listFor(type, false);
+
+    if (list)
+      return ControlPointInfo.controlPointAt(list.items, time);
+
+    return undefined;
   }
 
-  public snap(time: number, divisor: number)
+  public snap(time: number, divisor: number): number
   {
     const timingPoint = this.timingPointAt(time);
 
@@ -109,6 +119,9 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 
     const closestBeat = beats < 0 ? -Math.round(-beats) : Math.round(beats);
     const snappedTime = timingPoint.time + closestBeat * beatSnapLength;
+
+    if (this.timingPointAt(snappedTime) !== timingPoint)
+      return this.snap(snappedTime, divisor);
 
     if (snappedTime >= 0)
       return snappedTime;
@@ -125,8 +138,8 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
       if (existing && controlPoint.isRedundant(existing))
         return false;
 
-      if (existing && existing.time === controlPoint.time)
-        this.remove(existing);
+      // if (existing && existing.time === controlPoint.time)
+      //   this.remove(existing);
     }
 
     if (!this.#add(controlPoint))
@@ -271,6 +284,91 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
         throw new Error("Not a control point");
 
       this.#add(object);
+    }
+  }
+}
+
+export namespace ControlPointInfo
+{
+
+  export enum EqualitySelection
+{
+  FirstFound,
+  Leftmost,
+  Rightmost,
+}
+
+  export function controlPointAt<T extends ControlPoint>(list: readonly T[], time: number, equalitySelection: EqualitySelection = EqualitySelection.Rightmost)
+  {
+    let index = binarySearch(list, time, equalitySelection);
+    if (index < 0)
+      index = ~index - 1;
+
+    return index >= 0 ? list[index] : undefined;
+  }
+
+  export function binarySearchWithFallback<T extends ControlPoint>(list: readonly T[], time: number, fallback: T)
+  {
+    return controlPointAt(list, time) ?? fallback;
+  }
+
+  export function binarySearch<T extends ControlPoint>(list: readonly T[], time: number, equalitySelection: EqualitySelection)
+  {
+    const n = list.length;
+
+    if (n === 0)
+      return -1;
+
+    if (time < list[0].time)
+      return -1;
+
+    if (time > list[list.length - 1].time)
+      return ~n;
+
+    let l = 0;
+    let r = n - 1;
+    let equalityFound = false;
+
+    while (l <= r)
+    {
+      const pivot = l + ((r - l) >> 1);
+
+      if (list[pivot].time < time)
+        l = pivot + 1;
+      else if (list[pivot].time > time)
+        r = pivot - 1;
+      else
+      {
+        equalityFound = true;
+
+        switch (equalitySelection)
+        {
+        case EqualitySelection.Leftmost:
+          r = pivot - 1;
+          break;
+
+        case EqualitySelection.Rightmost:
+          l = pivot + 1;
+          break;
+
+        default:
+        case EqualitySelection.FirstFound:
+          return pivot;
+        }
+      }
+    }
+
+    if (!equalityFound)
+      return ~l;
+
+    switch (equalitySelection)
+    {
+    case EqualitySelection.Leftmost:
+      return l;
+
+    default:
+    case EqualitySelection.Rightmost:
+      return l - 1;
     }
   }
 }

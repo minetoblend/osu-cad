@@ -10,7 +10,7 @@ import { StopwatchClock } from "./StopwatchClock";
 
 export class DecouplingFramedClock implements ISourceChangeableClock, IAdjustableClock, IFrameBasedClock
 {
-  public readonly isFrameBasedClock: true;
+  public readonly isFrameBasedClock: true = true as const;
 
   public allowDecoupling = true;
 
@@ -48,7 +48,7 @@ export class DecouplingFramedClock implements ISourceChangeableClock, IAdjustabl
 
   #lastSeekFailed = false;
 
-  #realtimeReferenceClock = new StopwatchClock();
+  #realtimeReferenceClock = new StopwatchClock(true);
 
   #adjustableSourceClock: IAdjustableClock;
 

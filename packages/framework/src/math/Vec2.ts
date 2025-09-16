@@ -291,6 +291,14 @@ export class Vec2 implements ILerp<Vec2>
         clamp(this.y, y, y + height),
     );
   }
+
+  public toJson(): IVec2
+  {
+    return {
+      x: this.x,
+      y: this.y,
+    };
+  }
 }
 
 export interface IVec2

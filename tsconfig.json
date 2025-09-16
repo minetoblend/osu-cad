@@ -35,6 +35,9 @@
     },
     {
       "path": "./tools/nx"
+    },
+    {
+      "path": "./packages/visual-tests"
     }
   ],
   "ts-node": {

@@ -8,7 +8,16 @@ import { SliderToolPresenceOverlay } from "./HitCircleToolPresence";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 import { OsuPlayfield } from "../../../ui";
 import { PathTypeChangeIndicator } from "./PathTypeChangeIndicator";
+import iconUrl from "./icon.png";
+import { ComposeTool } from "@osucad/editor";
+import { SnapManager } from "../../SnapManager";
 
+@ComposeTool.metadata({
+  id: "slider",
+  label: "Slider",
+  icon: iconUrl,
+  presenceOverlay: SliderToolPresenceOverlay,
+})
 export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 {
   protected override createHitObject(): Slider
@@ -72,7 +81,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
     if (position.distance(lastPoint.position) < 10)
     {
-      this.hitObject.path.controlPoints = [...this.#path];
+      this.hitObject.controlPoints = [...this.#path];
       this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
       return;
     }
@@ -82,7 +91,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     if (!this.#explicitPathType)
       this.applyAutomaticPathType(path);
 
-    this.hitObject.path.controlPoints = path;
+    this.hitObject.controlPoints = path;
     this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
 
     let repeatCount = 0;
@@ -207,16 +216,4 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   {
     this.#pathText.flashPathType(type, this.playfield.toScreenSpace(this.hitObject.stackedPosition.add(position)));
   }
-}
-
-import iconUrl from "./icon.png";
-import { SnapManager } from "../../SnapManager";
-
-export namespace SliderTool
-{
-  export const id = "slider";
-  export const label = "Slider";
-  export const tool = SliderTool;
-  export const icon = iconUrl;
-  export const presenceOverlay = SliderToolPresenceOverlay;
 }

@@ -1,13 +1,13 @@
 import type { HitObject } from "@osucad/core";
-import { Ruleset } from "@osucad/core";
 import type { KeyBindingEvent, ScrollEvent } from "@osucad/framework";
-import { almostEquals, Anchor, Axes, Container, DependencyContainer, keyBindingHandler, provide, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
+import { almostEquals, Axes, Container, DependencyContainer, keyBindingHandler, provide, type ReadonlyDependencyContainer, resolved } from "@osucad/framework";
 import { EditorAction } from "../EditorAction";
 import { EditorClock } from "../EditorClock";
+import { EditorRuleset } from "../EditorRuleset";
 import { EditorScreen } from "../EditorScreen";
 import { EditorBeatmap } from "../runtime";
-import { ComposeTimeline } from "./timeline/ComposeTimeline";
 import { HitObjectSelection } from "./HitObjectSelection";
+import { ComposeTimeline } from "./timeline/ComposeTimeline";
 
 export class ComposeScreen extends EditorScreen
 {
@@ -16,8 +16,8 @@ export class ComposeScreen extends EditorScreen
     super();
   }
 
-  @resolved(Ruleset)
-  protected accessor ruleset!: Ruleset;
+  @resolved(EditorRuleset)
+  protected accessor editorRuleset!: EditorRuleset;
 
   @provide(HitObjectSelection)
   public readonly selection = new HitObjectSelection<HitObject>();
@@ -38,35 +38,18 @@ export class ComposeScreen extends EditorScreen
 
   protected async loadComposer()
   {
-    try
-    {
-      const composer = await this.ruleset.createHitObjectComposer?.();
 
-      if (composer)
-      {
-        await this.loadComponentAsync(composer);
+    const composer = await this.editorRuleset.createHitObjectComposer();
 
-        if (composer.hasTimeline)
-          this.addTimeline();
+    await this.loadComponentAsync(composer);
 
-        this.addInternal(new Container({
-          relativeSizeAxes: Axes.Both,
-          padding: { top: composer.hasTimeline ? ComposeTimeline.HEIGHT : 0 },
-          child: composer,
-        }));
-        return;
-      }
-    }
-    catch (e)
-    {
-      /* noop */
-      console.error(e);
-    }
+    if (composer.hasTimeline)
+      this.addTimeline();
 
-    this.addInternal(new SpriteText({
-      text: `${this.ruleset.title} does not support editing`,
-      anchor: Anchor.Center,
-      origin: Anchor.Center,
+    this.addInternal(new Container({
+      relativeSizeAxes: Axes.Both,
+      padding: { top: composer.hasTimeline ? ComposeTimeline.HEIGHT : 0 },
+      child: composer,
     }));
   }
 
@@ -112,14 +95,14 @@ export class ComposeScreen extends EditorScreen
   @keyBindingHandler(EditorAction.SeekForward)
   public seekForward(e: KeyBindingEvent<EditorAction>)
   {
-    this.#editorClock.seekBeats(1, true);
+    this.#editorClock.seekForward( true);
     return true;
   }
 
   @keyBindingHandler(EditorAction.SeekBackward)
   public seekBackward(e: KeyBindingEvent<EditorAction>)
   {
-    this.#editorClock.seekBeats(-1, true);
+    this.#editorClock.seekBackward( true);
     return true;
   }
 

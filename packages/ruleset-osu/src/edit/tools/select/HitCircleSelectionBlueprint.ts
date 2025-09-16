@@ -1,6 +1,5 @@
-import type { DrawableHitObject } from "@osucad/core";
+import type { DrawableHitObject, HitObjectLifetimeEntry } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
-import { HitObjectComposer } from "@osucad/editor";
 import type { ClickEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
@@ -10,6 +9,7 @@ import { OsuSkinComponents } from "../../../skinning";
 import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { SelectTool } from "./SelectTool";
+import { ComposeToolContainer } from "@osucad/editor";
 
 export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<HitCircle>
 {
@@ -17,16 +17,30 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
   public readonly positionBindable = new Bindable(new Vec2());
   public readonly stackHeightBindable = new Bindable(0);
 
+  protected override onApply(entry: HitObjectLifetimeEntry)
+  {
+    super.onApply(entry);
+
+    this.scaleBindable.bindTo(this.hitObject.scaleBindable);
+    this.positionBindable.bindTo(this.hitObject.positionBindable);
+    this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
+  }
+
+  protected override onFree(entry: HitObjectLifetimeEntry)
+  {
+    super.onFree(entry);
+
+    this.scaleBindable.unbindFrom(this.hitObject.scaleBindable);
+    this.positionBindable.unbindFrom(this.hitObject.positionBindable);
+    this.stackHeightBindable.unbindFrom(this.hitObject.stackHeightBindable);
+  }
+
   @dependencyLoader()
   #load()
   {
     this.origin = Anchor.Center;
     this.size = OsuHitObject.OBJECT_DIMENSIONS;
     this.cornerRadius = OsuHitObject.OBJECT_RADIUS;
-
-    this.scaleBindable.bindTo(this.hitObject.scaleBindable);
-    this.positionBindable.bindTo(this.hitObject.positionBindable);
-    this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
 
     this.internalChildren = [
       new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
@@ -41,27 +55,28 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     super.loadComplete();
 
     this.scaleBindable.bindValueChanged(e => this.scale = e.value, true);
-    this.positionBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition, true);
-    this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
+    this.positionBindable.bindValueChanged(this.#updatePosition, this);
+    this.stackHeightBindable.bindValueChanged(this.#updatePosition, this);
+    this.#updatePosition();
+  }
+
+  #updatePosition()
+  {
+    this.position = this.hitObject.stackedPosition;
   }
 
   #proxy: ProxyDrawable | null = null;
   #drawableHitObject: DrawableHitCircle | null = null;
 
-  #dragStartPosition!: Vec2;
-
-  @resolved(() => SelectTool)
-  accessor #selectTool!: SelectTool
-
-  @resolved(HitObjectComposer)
-  accessor #composer!: HitObjectComposer
+  @resolved(ComposeToolContainer)
+  accessor #toolContainer!: ComposeToolContainer
 
   protected override onDragStart(e: DragStartEvent): boolean
   {
     if (!this.selected)
       this.selectExclusive();
 
-    this.#composer.beginInteraction(new MoveInteraction({ completeOnMouseUp: true }));
+    this.#toolContainer.push(new MoveInteraction({ completeOnMouseUp: true }));
 
     return true;
   }
@@ -84,9 +99,10 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
 
   public override onClick(e: ClickEvent): boolean
   {
-    if (this.#canCycleSelection)
+    if (this.#canCycleSelection && this.#toolContainer.activeTool instanceof SelectTool)
     {
-      this.#selectTool.cycleSelection(this);
+      this.#toolContainer.activeTool.cycleSelection(this);
+
       this.#canCycleSelection = false;
       return true;
     }

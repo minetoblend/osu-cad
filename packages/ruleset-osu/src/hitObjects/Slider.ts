@@ -1,17 +1,16 @@
 import type { BeatmapDifficultyInfo, ControlPointInfo } from "@osucad/core";
-import { HitSoundInfo } from "@osucad/core";
-import { bindableBacked, HitSampleInfo, HitWindows, invalidations, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
+import { bindableBacked, HitSampleInfo, HitSoundInfo, HitWindows, invalidations, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
 import { Bindable, BindableNumber, Line, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
-import type { PathPoint } from "./PathPoint";
+import { PathPoint } from "./PathPoint";
 import { SliderPath } from "./SliderPath";
 import { SliderHeadCircle } from "./SliderHeadCircle";
 import { SliderTailCircle } from "./SliderTailCircle";
 import { SliderRepeat } from "./SliderRepeat";
 import { SliderEventGenerator, SliderEventType } from "./SliderEventGenerator";
 import { SliderTick } from "./SliderTick";
-import { type DDSAttributes, nested, serializer, type, typeDecorator } from "@osucad/multiplayer-core";
+import { type DDSAttributes, serializer, type, typeDecorator } from "@osucad/multiplayer-core";
 import { SliderVelocityPoint } from "../beatmaps";
 
 export interface SliderOptions extends OsuHitObjectOptions
@@ -30,6 +29,7 @@ const nodeHitSoundsSerializer = serializer<readonly HitSoundInfo[], [SampleSet, 
 @invalidations({
   repeatCount: ["applyDefaults", "stacking"],
   nodeHitSounds: ["applyDefaults"],
+  velocityOverride: ["applyDefaults", "stacking"],
 })
 export class Slider extends OsuHitObject
 {
@@ -43,9 +43,7 @@ export class Slider extends OsuHitObject
     const { repeatCount, expectedDistance, controlPoints, nodeHitSounds, ...rest } = options;
     super(Slider.attributes, rest);
 
-    safeAssign(this, { repeatCount, nodeHitSounds });
-
-    safeAssign(this.path, { expectedDistance, controlPoints });
+    safeAssign(this, { repeatCount, nodeHitSounds, expectedDistance, controlPoints });
 
     this.positionBindable.bindValueChanged(this.#updateNestedPositions, this);
   }
@@ -124,19 +122,29 @@ export class Slider extends OsuHitObject
   @bindableBacked("nodeHitSoundsBindable")
   public accessor nodeHitSounds!: readonly HitSoundInfo[]
 
+  @type("float32", { nullable: true })
+  public accessor velocityOverride: number | null = null
+
+  #baseVelocity = 1;
+
+  public get baseVelocity()
+  {
+    return this.#baseVelocity;
+  }
+
   protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
     super.applyDefaultsToSelf(difficulty, controlPoints);
 
     const timingPoint = controlPoints.timingPointAt(this.startTime + 1);
 
-    const baseVelocity = Slider.BASE_SCORING_DISTANCE * difficulty.sliderMultiplier / timingPoint.beatLength;
+    this.#baseVelocity = Slider.BASE_SCORING_DISTANCE * difficulty.sliderMultiplier / timingPoint.beatLength;
 
     const velocityPoint = controlPoints.controlPointAt(SliderVelocityPoint, this.startTime + 1);
 
-    const sliderVelocity = velocityPoint?.velocity ?? 1;
+    const sliderVelocity = this.velocityOverride ?? velocityPoint?.velocity ?? 1;
 
-    this.velocity = baseVelocity * sliderVelocity;
+    this.velocity = this.#baseVelocity * sliderVelocity;
 
     const scoringDistance = this.velocity * timingPoint.beatLength;
 
@@ -151,22 +159,22 @@ export class Slider extends OsuHitObject
     });
   }
 
-  @nested(SliderPath)
-  @(({ set }) => ({
-    init(value)
-    {
-      this.bindPathVersion(value);
+  public readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
 
-      return value;
-    },
-    set(value)
-    {
-      this.bindPathVersion(value);
+  @typeDecorator(PathPoint.listSerializer)
+  @bindableBacked("controlPointsBindable")
+  public accessor controlPoints!: readonly PathPoint[]
 
-      set.call(this, value);
-    },
-  }))
-  public accessor path = new SliderPath();
+  public readonly expectedDistanceBindable = new Bindable(0);
+
+  @type("float64")
+  @bindableBacked("expectedDistanceBindable")
+  public accessor expectedDistance!: number
+
+  public readonly path = new SliderPath(
+      this.controlPointsBindable,
+      this.expectedDistanceBindable,
+  );
 
   public spanAt(progress: number)
   {
@@ -320,7 +328,7 @@ export class Slider extends OsuHitObject
 
     if (time > this.startTime + duration)
     {
-      const beatLength = controlPointInfo.timingPointAt(this.startTime).beatLength;
+      const beatLength = controlPointInfo.timingPointAt(this.startTime + duration).beatLength;
 
       time -= beatLength / divisor;
     }
@@ -330,14 +338,14 @@ export class Slider extends OsuHitObject
 
   public snapPathLength(controlPointInfo: ControlPointInfo, divisor: number)
   {
-    this.path.expectedDistance = this.getSnappedPathLength(controlPointInfo, divisor);
+    this.expectedDistance = this.getSnappedPathLength(controlPointInfo, divisor);
   }
 
   public applyToPath(updateFn: (point: PathPoint, index: number, path: readonly PathPoint[]) => PathPoint)
   {
-    const controlPoints = this.path.controlPoints;
+    const controlPoints = this.controlPoints;
 
-    this.path.controlPoints = controlPoints.map((p, i) =>
+    this.controlPoints = controlPoints.map((p, i) =>
       i === 0 ? p : updateFn(p, i, controlPoints),
     );
   }

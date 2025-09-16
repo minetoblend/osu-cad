@@ -1,13 +1,12 @@
 import { SkinnableDrawable } from "@osucad/core";
 import { TimelineBlueprint } from "@osucad/editor";
 import type { Drawable } from "@osucad/framework";
-import { Container } from "@osucad/framework";
-import { Anchor, Axes, Box, dependencyLoader, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Box, Container, dependencyLoader, Vec2 } from "@osucad/framework";
 import type { Slider } from "../../hitObjects";
 import { OsuHitObject } from "../../hitObjects";
+import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 import { OsuSkinComponents } from "../../skinning";
 import { OsuTimelineBlueprint } from "./OsuTimelineBlueprint";
-import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 import { TimelineSliderTail } from "./TimelineSliderTail";
 
 export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
@@ -67,6 +66,13 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
     }, true);
   }
 
+  public override contains(screenSpacePosition: Vec2): boolean
+  {
+    return super.contains(screenSpacePosition)
+        || this.#headSelectionOverlay.contains(screenSpacePosition)
+        || this.#tailCircle.contains(screenSpacePosition);
+  }
+
   protected override defaultsApplied(): void
   {
     this.size = new Vec2(this.hitObject.duration, TimelineBlueprint.SIZE);
@@ -95,6 +101,7 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
               anchor: Anchor.CenterLeft,
               origin: Anchor.Center,
               scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+              depth: drawableIndex,
             }),
         );
       }

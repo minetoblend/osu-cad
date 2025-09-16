@@ -1,14 +1,14 @@
 import type { ClickEvent, Drawable, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
 import { Anchor, Axes, Box, Container, EasingFunction, MouseButton, resolved, Vec2 } from "@osucad/framework";
+import type { ComposeToolClass } from "../tools";
 import { ComposeToolbar } from "../tools";
-import type { ComposeToolInfo } from "./ComposeToolInfo";
 import { ActiveToolBindable } from "./ActiveToolBindable";
 import { EditorColors } from "../../EditorColors";
 import { LazyIcon } from "../../graphics";
 
 export class ComposeToolButton extends Container
 {
-  public constructor(public readonly tool: ComposeToolInfo)
+  public constructor(public readonly tool: ComposeToolClass)
   {
     super();
 

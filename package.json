@@ -38,6 +38,7 @@
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "glob": "^11.0.3",
+    "is-in-ci": "^2.0.0",
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
@@ -51,7 +52,7 @@
     "verdaccio": "^6.1.6",
     "vite": "^6.0.0",
     "vite-plugin-dts": "~4.5.0",
-    "vitest": "^3.0.0"
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@8.15.5+sha1.a58c038faac410c947dbdb93eb30994037d0fce2",
   "nx": {

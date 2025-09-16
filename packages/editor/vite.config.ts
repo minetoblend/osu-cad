@@ -1,14 +1,15 @@
 /// <reference types='vitest' />
+import { visualTests } from "@osucad/visual-tests/plugin";
 import { defaultClientConditions, defineConfig } from "vite";
-import dts from "vite-plugin-dts";
-import * as path from "path";
 
 import { dependencies } from "./package.json";
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/packages/core",
-  plugins: [dts({ entryRoot: "src", tsconfigPath: path.join(__dirname, "tsconfig.lib.json") })],
+  plugins: [
+    visualTests(),
+  ],
   resolve: {
     conditions: [
       ...defaultClientConditions,

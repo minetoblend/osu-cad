@@ -1,4 +1,4 @@
-import { BeatmapParser, rulesets, TimingControlPoint } from "@osucad/core";
+import { BeatmapParser, rulesets } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
 import { CountingIdGenerator } from "@osucad/multiplayer-core";
 import type { IFullDocumentSummary } from "@osucad/multiplayer-protocol";
@@ -23,7 +23,6 @@ export async function createTestBeatmapSummary(storage: BlobStorage, documentSto
 
   const beatmap = await new BeatmapParser().parse(await readFile(resolve(directory, beatmapFile), "utf8"));
 
-
   const runtime = await EditorRuntime.createEmptyFromBeatmap(beatmap, {
     idGenerator: new CountingIdGenerator(),
     storage: {
@@ -38,10 +37,6 @@ export async function createTestBeatmapSummary(storage: BlobStorage, documentSto
         .then(id => ({ id })),
     },
   });
-
-  const timingPoint = new TimingControlPoint();
-  timingPoint.bpm = 180;
-  runtime.root.controlPointInfo.add(timingPoint);
 
   for (const file of files)
   {

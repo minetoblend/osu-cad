@@ -1,29 +1,40 @@
-import { bindableBacked } from "@osucad/core";
 import { Bindable, BoundsBuilder, CachedValue, Rectangle, Vec2 } from "@osucad/framework";
-import type { DDSAttributes } from "@osucad/multiplayer-core";
-import { ObjectDDS, serializer, type, typeDecorator } from "@osucad/multiplayer-core";
 import { CalculatedPath } from "./CalculatedPath";
+import type { PathPoint } from "./PathPoint";
 import { PathType } from "./PathPoint";
-import { PathPoint } from "./PathPoint";
 import { PathSegment } from "./PathSegment";
 
-const pathPointSerializer = serializer<readonly PathPoint[], [number, number, PathType | null][]>({
-  serialize: value => value.map(p => [Math.round(p.position.x), Math.round(p.position.y), p.type]),
-  deserialize: value => value.map(([x, y, type]) => new PathPoint(new Vec2(x, y), type)),
-});
 
-export class SliderPath extends ObjectDDS
+export class SliderPath
 {
-  public static readonly attributes: DDSAttributes = {
-    type: "@osucad/slider-path",
-    version: 0,
-  };
-
   public readonly version = new Bindable(0);
 
-  public constructor()
+  public readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
+
+  public readonly expectedDistanceBindable = new Bindable(0);
+
+  public get expectedDistance()
   {
-    super(SliderPath.attributes);
+    return this.expectedDistanceBindable.value;
+  }
+
+  public get controlPoints()
+  {
+    return this.controlPointsBindable.value;
+  }
+
+  public constructor(
+    controlPointsBindable?: Bindable<readonly PathPoint[]>,
+    expectedDistanceBindable?: Bindable<number>,
+  )
+  {
+    if (controlPointsBindable)
+      this.controlPointsBindable.bindTo(controlPointsBindable);
+
+    if (expectedDistanceBindable)
+      this.expectedDistanceBindable.bindTo(expectedDistanceBindable);
+
+
     this.controlPointsBindable.bindValueChanged(this.invalidatePath, this);
     this.expectedDistanceBindable.bindValueChanged(() => this.#fullRange.invalidate());
   }
@@ -35,27 +46,19 @@ export class SliderPath extends ObjectDDS
     this.version.value++;
   }
 
-  public readonly expectedDistanceBindable = new Bindable(0);
-
   public get distance()
   {
     return Math.min(this.expectedDistance, this.calculatedDistance);
   }
 
-  @type("float64")
-  @bindableBacked("expectedDistanceBindable")
-  public accessor expectedDistance!: number
+
 
   public get calculatedDistance()
   {
     return this.calculatedPath.totalDistance;
   }
 
-  public readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
 
-  @typeDecorator(pathPointSerializer)
-  @bindableBacked("controlPointsBindable")
-  public accessor controlPoints!: readonly PathPoint[]
 
   #bounds = new Rectangle(0,0,0,0);
   readonly #calculatedPath = new CachedValue<CalculatedPath>();
@@ -139,7 +142,7 @@ export class SliderPath extends ObjectDDS
     const segments: PathSegment[] = [];
 
     let segmentStart = 0;
-    let segmentType = this.controlPoints[0].type ?? PathType.Bezier;
+    let segmentType = this.controlPoints[0]?.type ?? PathType.Bezier;
 
     for (let i = 1; i < this.controlPoints.length; i++)
     {

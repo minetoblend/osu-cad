@@ -1,5 +1,5 @@
 import { Playfield } from "@osucad/core";
-import { EditorColors, HitObjectSelection, HotkeyBar, Interaction, ModalInteraction } from "@osucad/editor";
+import { EditorColors, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import type { Container, InputManager, MouseDownEvent, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
@@ -8,9 +8,9 @@ import { SnapTargetContainer } from "./SnapTargetContainer";
 import { SnapTargetMarker } from "./SnapTargetMarker";
 
 
-export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
+export class PickSnapTargetsInteraction extends ModalComposeTool<Vec2[]>
 {
-  public override result: Vec2[] = [];
+  public result: Vec2[] = [];
 
   #cursor!: SnapTargetCursor;
 
@@ -33,11 +33,10 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
     this.internalChildren = [
       this.#cursor = new SnapTargetCursor(),
       this.#snapTargetContainer = new SnapTargetContainer({ relativeSizeAxes: Axes.Both }),
-      new HotkeyBar(this),
     ];
   }
 
-  @Interaction.invokeOnKey("A", "Add Snap Point")
+  @Hotkeys.key("A")
   #addSnapTarget()
   {
     const position = this.snapTargetAtMousePosition.position;
@@ -49,7 +48,7 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
     this.#snapTargetContainer.add(new SnapTargetMarker(position));
   }
 
-  @Interaction.invokeOnKey("Alt+A", "Remove Last Snap Point")
+  @Hotkeys.key("Alt+A")
   #removeLastSnapTarget()
   {
     const point = this.result.pop();
@@ -77,7 +76,7 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
     if (e.button === MouseButton.Left)
     {
       this.result.push(this.snapTargetAtMousePosition.position);
-      this.complete();
+      this.complete(this.result);
       return true;
     }
 
@@ -107,10 +106,10 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
     };
   }
 
-  @Interaction.invokeOnKey("B")
+  @Hotkeys.key("B")
   #returnEmptyResult()
   {
-    this.cancel();
+    this.complete();
   }
 
   protected override update(): void

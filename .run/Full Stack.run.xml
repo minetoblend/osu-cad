@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Full Stack" type="NxRunConfigurationType">
+    <option name="nx-projects" value="@osucad/source" />
+    <option name="nx-targets" value="full-stack" />
+    <option name="nx-target-configuration" value="" />
+    <envs />
+    <option name="arguments" value="" />
+    <method v="2" />
+  </configuration>
+</component>

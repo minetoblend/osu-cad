@@ -2,9 +2,9 @@ import type { Drawable, KeyCombination } from "@osucad/framework";
 import { Anchor, Axes, Box, CompositeDrawable, Container, DrawableSprite, FillDirection, FillFlowContainer, InputKey, loadTexture, SpriteText } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 
-export class DrawableToolHotKey extends CompositeDrawable
+export class DrawableKeyCombination extends CompositeDrawable
 {
-  public constructor(public readonly keyCombinations: KeyCombination[], public readonly description: string)
+  public constructor(keyCombination: KeyCombination)
   {
     super();
 
@@ -14,18 +14,9 @@ export class DrawableToolHotKey extends CompositeDrawable
       autoSizeAxes: Axes.Both,
       direction: FillDirection.Horizontal,
       children: [
-        ...keyCombinations.flatMap(it => it.keys).map(key =>
+        ...keyCombination.keys.map(key =>
           createDrawableInputKey(key).with({ anchor: Anchor.CenterLeft, origin: Anchor.CenterLeft }),
-
         ),
-        new SpriteText({
-          text: description,
-          margin: 4,
-          style: {
-            fill: 0xffffff,
-            fontSize: 14,
-          },
-        }),
       ],
     });
   }
@@ -39,7 +30,7 @@ function createDrawableInputKey(key: InputKey): Drawable
 {
   let keyString = InputKey[key];
 
-  switch(key)
+  switch (key)
   {
   case InputKey.MouseLeftButton:
     return createIcon(mouseLeft);

@@ -1,9 +1,10 @@
 import { Playfield } from "@osucad/core";
-import { ComposerStatusBar, EditorHistory, HitObjectComposer, HitObjectSelection, HotkeyBar, Interaction } from "@osucad/editor";
+import type { ComposeTool } from "@osucad/editor";
+import { ComposerStatusBar, EditorHistory, HitObjectComposer, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import type { Drawable, MouseMoveEvent } from "@osucad/framework";
-import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, resolved, Vec2 } from "@osucad/framework";
 import { Color, Matrix } from "pixi.js";
-import { Slider, Spinner, type OsuHitObject } from "../../hitObjects";
+import { type OsuHitObject, Slider, Spinner } from "../../hitObjects";
 import { OsuPlayfield } from "../../ui";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { DashedLine } from "./DashedLine";
@@ -14,7 +15,7 @@ export type TransformOrigin =
   | { type: "playfield_center" }
   | { type: "selection_center" };
 
-export class RotateInteraction extends Interaction
+export class RotateInteraction extends ModalComposeTool
 {
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>;
@@ -28,7 +29,7 @@ export class RotateInteraction extends Interaction
   @resolved(HitObjectComposer)
   accessor #composer!: HitObjectComposer
 
-  @Interaction.inputNumberString()
+  @Hotkeys.inputNumberString()
   private readonly stringValue = new Bindable<string>("");
 
   #cumulativeAngle = 0;
@@ -60,16 +61,16 @@ export class RotateInteraction extends Interaction
     ];
   }
 
-  @Interaction.invertOnKey("Shift", "Precision Mode")
+  @Hotkeys.toggle.key("Shift")
   private readonly precise = new BindableBoolean(false);
 
-  @Interaction.invertOnKey("Control", "Snap Invert")
-  @Interaction.toggleOnKeyDown("Shift+Tab", "Snap")
+  @Hotkeys.toggle.key("Control")
+  @Hotkeys.toggle.keyDown("Shift+Tab")
   private readonly snapped = new BindableBoolean(false);
 
   private readonly transformOrigin = new Bindable<TransformOrigin>({ type: "playfield_center" });
 
-  @Interaction.invokeOnKey("B", "Pick Rotation Origin")
+  @Hotkeys.key("B")
   #pickOrigin()
   {
     this.#history.discardUncommittedChanges();
@@ -84,25 +85,19 @@ export class RotateInteraction extends Interaction
     });
   }
 
-  @Interaction.invokeOnKey("P", "Rotate around Playfield Center")
+  @Hotkeys.key("P")
   #setOriginToPlayfieldCenter()
   {
     this.transformOrigin.value = { type: "playfield_center" };
   }
 
-  @Interaction.invokeOnKey("S", "Rotate around Selection Center")
+  @Hotkeys.key("S")
   #setOriginToSelectionCenter()
   {
     if (OsuOperatorUtils.getBounds(this.#selection)?.size.isZero !== false)
       return;
 
     this.transformOrigin.value = { type: "selection_center" };
-  }
-
-  @dependencyLoader()
-  #load()
-  {
-    this.addInternal(new HotkeyBar(this));
   }
 
   protected override loadComplete(): void
@@ -136,7 +131,7 @@ export class RotateInteraction extends Interaction
 
   protected override onMouseMove(e: MouseMoveEvent): boolean
   {
-    if (!this.screenStack?.isCurrentScreen(this))
+    if (this.completed)
       return true;
 
     const position = this.#playfield.toLocalSpace(e.screenSpaceMousePosition);
@@ -251,5 +246,26 @@ export class RotateInteraction extends Interaction
       if (obj instanceof Slider)
         obj.applyToPath(p => p.transform(pathTransform));
     }
+  }
+
+  public override onEntering(previous?: ComposeTool)
+  {
+    super.onEntering(previous);
+
+    this.history.commit();
+  }
+
+  @Hotkeys.key("MouseLeftButton")
+  @Hotkeys.key("Enter")
+  #complete()
+  {
+    this.complete();
+  }
+
+  @Hotkeys.key("MouseRightButton")
+  @Hotkeys.key("Escape")
+  #cancel()
+  {
+    this.cancel();
   }
 }

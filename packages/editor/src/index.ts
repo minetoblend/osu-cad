@@ -13,3 +13,6 @@ export * from "./BindableBeatDivisor";
 export * from "./EditorBeatmapProcessor";
 export * from "./EditorColors";
 export * from "./userInterface";
+export * from "./IBeatSyncProvider" ;
+export * from "./utils";
+export * from "./hotkeys";

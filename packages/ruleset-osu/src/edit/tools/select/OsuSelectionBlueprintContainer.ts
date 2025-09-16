@@ -2,20 +2,41 @@ import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import type { OsuHitObject } from "../../../hitObjects";
 import { HitCircle, Slider } from "../../../hitObjects";
 import type { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
-import { HitCircleSelectionBlueprint } from "./HitCircleSelectionBlueprint";
 import { OsuHitObjectLifetimeEntry } from "../../../hitObjects/drawables/OsuHitObjectLifetimeEntry";
+import type { HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import { MultiDrawablePool } from "@osucad/core";
+import { dependencyLoader, provideSelf } from "@osucad/framework";
+import { HitCircleSelectionBlueprint } from "./HitCircleSelectionBlueprint";
 import { SliderSelectionBlueprint } from "./SliderSelectionBlueprint";
+import { SelectBox } from "./SelectBox";
 
+@provideSelf()
 export class OsuSelectionBlueprintContainer extends SelectionBlueprintContainer<OsuHitObject>
 {
-  protected override getBlueprintFor(hitObject: OsuHitObject): HitObjectSelectionBlueprint<OsuHitObject> | null
+  readonly #pool = new MultiDrawablePool<HitObject, HitObjectSelectionBlueprint<any> >();
+
+  @dependencyLoader()
+  #load()
   {
-    switch (hitObject.constructor)
+    this.addRangeInternal([
+      this.#pool,
+      new SelectBox().with({ depth: Number.MAX_VALUE }),
+    ]);
+
+    this.#pool.registerPool(HitCircle, HitCircleSelectionBlueprint, 10, 30);
+    this.#pool.registerPool(Slider, SliderSelectionBlueprint, 10, 30);
+  }
+
+
+  protected override getBlueprintFor(entry: HitObjectLifetimeEntry): HitObjectSelectionBlueprint<OsuHitObject> | null
+  {
+    const drawable = this.#pool.getPooledDrawableRepresentation(entry.hitObject);
+
+    if (drawable)
     {
-    case HitCircle:
-      return new HitCircleSelectionBlueprint(hitObject as HitCircle);
-    case Slider:
-      return new SliderSelectionBlueprint(hitObject as Slider);
+      drawable.entry = entry;
+
+      return drawable;
     }
 
     return null;

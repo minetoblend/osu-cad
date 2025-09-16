@@ -58,7 +58,7 @@ export class SpinnerRotationTracker extends CircularContainer
 
     if (this.#drawableSpinner.autoMode)
     {
-      const angle = (this.time.current - this.#drawableSpinner.hitObject.startTime) / 100;
+      const angle = (this.time.current - this.#drawableSpinner.hitObject.startTime) / 10;
       this.#mousePosition = new Vec2(
           this.drawSize.x / 2 + Math.cos(angle) * 100,
           this.drawSize.y / 2 + Math.sin(angle) * 100,

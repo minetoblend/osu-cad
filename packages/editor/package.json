@@ -50,6 +50,7 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
-    "vitest": "^3.0.0"
+    "vitest": "^3.0.0",
+    "@osucad/visual-tests": "workspace:^"
   }
 }

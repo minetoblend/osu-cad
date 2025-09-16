@@ -8,3 +8,4 @@ export { OffsetClock } from "./OffsetClock";
 export { StopwatchClock } from "./StopwatchClock";
 export { type ISourceChangeableClock } from "./ISourceChangeableClock";
 export { DecouplingFramedClock } from "./DecouplingFramedClock";
+export { InterpolatingFramedClock } from "./InterpolatingFramedClock";

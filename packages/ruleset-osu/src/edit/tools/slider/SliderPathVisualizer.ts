@@ -61,7 +61,7 @@ export class SliderPathVisualizer extends CompositeDrawable
 
   protected get controlPoints()
   {
-    return this.slider.path.controlPoints;
+    return this.slider.controlPoints;
   }
 
   #updatePath()

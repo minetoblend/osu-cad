@@ -123,17 +123,15 @@ export class SnapManager extends Component
 
       if (this.sliderAnchors.value)
       {
-        for (let i = 1; i < hitObject.path.controlPoints.length; i++)
-        {
-          yield hitObject.path.controlPoints[i].position.add(position);
-        }
+        for (let i = 1; i < hitObject.controlPoints.length; i++)
+          yield hitObject.controlPoints[i].position.add(position);
       }
 
       if (this.blankets.value)
       {
         for (const segment of hitObject.path.pathSegments)
         {
-          if (segment.type !== PathType.PerfectCurve || segment.pathPoints.length !== 3)
+          if (segment.type !== PathType.PerfectCurve || segment.points.length !== 3)
             continue;
 
           const arc = PathApproximator.getCircularArcProperties(segment.points);

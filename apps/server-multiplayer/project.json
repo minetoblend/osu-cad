@@ -51,7 +51,7 @@
       ],
       "options": {
         "buildTarget": "@osucad/server-multiplayer:build",
-        "runBuildTargetDependencies": true
+        "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {

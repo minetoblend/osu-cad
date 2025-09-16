@@ -6,3 +6,4 @@ export * from "./BeatmapMetadata";
 export * from "./BeatmapDifficultyInfo";
 export * from "./timing";
 export * from "./controlPoints";
+export * from "./FramedBeatmapClock";

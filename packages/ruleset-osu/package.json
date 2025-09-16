@@ -38,5 +38,8 @@
     "@osucad/framework": "1.1.2",
     "@osucad/editor": "1.1.2",
     "@osucad/multiplayer-core": "workspace:^"
+  },
+  "devDependencies": {
+    "@osucad/visual-tests": "workspace:^"
   }
 }

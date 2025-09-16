@@ -1,5 +1,6 @@
 import { Vec2 } from "@osucad/framework";
 import type { Matrix } from "pixi.js";
+import { serializer } from "@osucad/multiplayer-core";
 
 export enum PathType
 {
@@ -106,4 +107,10 @@ export class PathPoint
   {
     return this.withPosition(matrix.apply(this.position, new Vec2()));
   }
+
+  public static readonly listSerializer = serializer<readonly PathPoint[], [number, number, PathType | null][]>({
+    serialize: value => value.map(p => [Math.round(p.position.x), Math.round(p.position.y), p.type]),
+    deserialize: value => value.map(([x, y, type]) => new PathPoint(new Vec2(x, y), type)),
+  });
 }
+

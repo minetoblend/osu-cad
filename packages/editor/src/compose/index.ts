@@ -4,5 +4,4 @@ export * from "./HitObjectSelection";
 export * from "./timeline";
 export * from "./tools";
 export * from "./operators";
-export * from "./interactions";
 export * from "./ComposerStatusBar";

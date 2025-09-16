@@ -1,12 +1,16 @@
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import type { InputManager, MouseButton } from "@osucad/framework";
-import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
+import { Anchor, Axes, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 import { ComposeToolContainer } from "./ComposeToolContainer";
+import { HotkeyContainer } from "../../hotkeys/HotkeyContainer";
+import type { ModalComposeTool } from "./ModalComposeTool";
+import type { ComposeToolInfo } from "./ComposeToolInfo";
+import { HotkeyBar } from "../../hotkeys/HotkeyBar";
 
-export abstract class ComposeTool extends CompositeDrawable
+export abstract class ComposeTool extends HotkeyContainer
 {
   @dependencyLoader()
   #load()
@@ -19,6 +23,11 @@ export abstract class ComposeTool extends CompositeDrawable
     super.loadComplete();
 
     this.inputManager = this.getContainingInputManager()!;
+
+    this.addInternal(new HotkeyBar(this).with({
+      anchor: Anchor.BottomLeft,
+      origin: Anchor.BottomLeft,
+    }));
   }
 
   protected inputManager!: InputManager;
@@ -42,7 +51,12 @@ export abstract class ComposeTool extends CompositeDrawable
   protected accessor history!: EditorHistory
 
   @resolved(ComposeToolContainer)
-  accessor #toolContainer!: ComposeToolContainer
+  protected accessor toolContainer!: ComposeToolContainer
+
+  public override get removeWhenNotAlive(): boolean
+  {
+    return false;
+  }
 
   protected get screenSpaceMousePosition()
   {
@@ -76,6 +90,80 @@ export abstract class ComposeTool extends CompositeDrawable
 
   public recreate()
   {
-    this.#toolContainer.refresh();
+    this.toolContainer.refresh();
   }
+
+  public onEntering(previous?: ComposeTool)
+  {
+  }
+
+  public onExiting(next?: ComposeTool)
+  {
+  }
+
+  public onSuspending(next: ComposeTool)
+  {
+  }
+
+  public onResuming(previous: ComposeTool)
+  {
+  }
+
+  protected push<T>(modal: ModalComposeTool<T>): Promise<T | undefined>
+  {
+    return new Promise<T | undefined>((resolve) =>
+    {
+      modal.onComplete.once(resolve);
+
+      this.toolContainer.push(modal);
+    });
+  }
+
+  declare private static _info: ComposeToolInfo;
+
+  public static get info(): ComposeToolInfo
+  {
+    if (!this._info)
+      throw new Error("ComposeTool must be decorated with ComposeTool.metadata");
+
+    return this._info;
+  }
+
+  public static get id()
+  {
+    return this.info.id;
+  }
+
+  public static get label()
+  {
+    return this.info.label;
+  }
+
+  public static get icon()
+  {
+    return this.info.icon;
+  }
+
+  public static get presenceOverlay()
+  {
+    return this.info.presenceOverlay;
+  }
+}
+
+export type ComposeToolClass = (new () => ComposeTool) & ComposeToolInfo;
+
+export namespace ComposeTool
+{
+
+
+  export function metadata<T extends ComposeTool>(toolInfo: ComposeToolInfo)
+  {
+    return (
+      target: new () => T,
+    ) =>
+    {
+      (target as { _info?: ComposeToolInfo })._info = toolInfo;
+    };
+  }
+
 }

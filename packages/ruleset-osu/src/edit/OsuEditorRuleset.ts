@@ -3,8 +3,8 @@ import { EditorRuleset, keyBinding } from "@osucad/editor";
 import type { Component, KeyBinding } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { Slider } from "../hitObjects/Slider";
-import { SliderPath } from "../hitObjects/SliderPath";
 import { Spinner } from "../hitObjects/Spinner";
+import type { OsuRuleset } from "../OsuRuleset";
 import { EditorComboProcessor } from "./EditorComboProcessor";
 import { EditorStackingProcessor } from "./EditorStackingProcessor";
 import { OsuTimelineBlueprintContainer } from "./timeline/OsuTimelineBlueprintContainer";
@@ -13,12 +13,16 @@ import { SliderVelocityPoint } from "../beatmaps";
 
 export class OsuEditorRuleset extends EditorRuleset
 {
+  public constructor(public readonly ruleset: OsuRuleset)
+  {
+    super();
+  }
+
   public readonly runtimeConfig: EditorRuntimeConfig = {
     types: [
       HitCircle,
       Slider,
       Spinner,
-      SliderPath,
       SliderVelocityPoint,
     ],
   };

@@ -2,8 +2,8 @@ import type { DragEndEvent, DragEvent, DragStartEvent } from "@osucad/framework"
 import { GraphicsDrawable, Rectangle, resolved, Vec2 } from "@osucad/framework";
 import type { Graphics } from "pixi.js";
 import { HitObjectSelection } from "@osucad/editor";
-import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import type { OsuHitObject } from "../../../hitObjects";
+import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 
 export class SelectBox extends GraphicsDrawable
 {
@@ -18,8 +18,8 @@ export class SelectBox extends GraphicsDrawable
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>
 
-  @resolved(SelectionBlueprintContainer as typeof SelectionBlueprintContainer<OsuHitObject>)
-  accessor #selectionContainer!: SelectionBlueprintContainer<OsuHitObject>;
+  @resolved(() => OsuSelectionBlueprintContainer)
+  accessor #selectionContainer!: OsuSelectionBlueprintContainer;
 
   public override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
   {

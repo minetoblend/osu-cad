@@ -34,6 +34,9 @@ export class StopwatchClock implements IAdjustableClock
 
   public get currentTime()
   {
+    if (!this.isRunning)
+      return this.#seekOffset;
+
     return this.#stopwatchCurrentTime + this.#seekOffset;
   }
 

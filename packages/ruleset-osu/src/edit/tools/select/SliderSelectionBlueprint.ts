@@ -1,20 +1,17 @@
-import type { DrawableHitObject } from "@osucad/core";
+import type { DrawableHitObject, HitObjectLifetimeEntry } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
-import { HitObjectComposer } from "@osucad/editor";
+import { ComposeToolContainer } from "@osucad/editor";
 import type { DragStartEvent, Rectangle } from "@osucad/framework";
-import { ProxyDrawable } from "@osucad/framework";
-import { Anchor, Axes, Bindable, Container, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import { Color } from "pixi.js";
 import type { Slider } from "../../../hitObjects";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
 import { OsuSkinComponents } from "../../../skinning";
 import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
-import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
 {
-  #content!: Container;
   #sliderHead!: SkinnableDrawable;
   #sliderTail!: SkinnableDrawable;
 
@@ -23,27 +20,45 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   public readonly stackHeightBindable = new Bindable(0);
   public readonly pathVersion = new Bindable(0);
 
-  @dependencyLoader()
-  #load()
+  protected override onApply(entry: HitObjectLifetimeEntry)
   {
-    this.addInternal(this.#content = new Container({
-      relativeSizeAxes: Axes.Both,
-      children: [
-        this.#sliderTail = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-          anchor: Anchor.Center,
-          origin: Anchor.Center,
-        }),
-        this.#sliderHead = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-          anchor: Anchor.Center,
-          origin: Anchor.Center,
-        }),
-      ],
-    }));
+    super.onApply(entry);
 
     this.scaleBindable.bindTo(this.hitObject.scaleBindable);
     this.positionBindable.bindTo(this.hitObject.positionBindable);
     this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
     this.pathVersion.bindTo(this.hitObject.path.version);
+
+    this.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
+
+    this.#updateTail();
+  }
+
+  protected override onFree(entry: HitObjectLifetimeEntry)
+  {
+    super.onFree(entry);
+
+    this.scaleBindable.unbindFrom(this.hitObject.scaleBindable);
+    this.positionBindable.unbindFrom(this.hitObject.positionBindable);
+    this.stackHeightBindable.unbindFrom(this.hitObject.stackHeightBindable);
+    this.pathVersion.unbindFrom(this.hitObject.path.version);
+
+    this.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
+  }
+
+  @dependencyLoader()
+  #load()
+  {
+    this.addRangeInternal([
+      this.#sliderTail = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+      this.#sliderHead = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+    ]);
   }
 
   protected override loadComplete(): void
@@ -57,8 +72,6 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
       // this.updateDrawNodeTransform();
     }, true);
     this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
-
-    this.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
     this.pathVersion.bindValueChanged(() => this.scheduler.addOnce(this.#updateTail, this));
 
     this.#updateTail();
@@ -126,8 +139,8 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     return this.hitObject.contains(position.add(this.position));
   }
 
-  @resolved(HitObjectComposer)
-    accessor #composer!: HitObjectComposer
+  @resolved(ComposeToolContainer)
+  accessor #toolContainer!: ComposeToolContainer
 
 
   protected override onDragStart(e: DragStartEvent): boolean
@@ -135,7 +148,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     if (!this.selected)
       this.selectExclusive();
 
-    this.#composer.beginInteraction(new MoveInteraction({ completeOnMouseUp: true }));
+    this.#toolContainer.push(new MoveInteraction({ completeOnMouseUp: true }));
 
     return false;
   }
@@ -147,11 +160,4 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   }
 
   #proxy: ProxyDrawable | null = null;
-
-  public override dispose()
-  {
-    this.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
-
-    super.dispose();
-  }
 }

@@ -3,6 +3,8 @@ import type { IClock } from "./IClock";
 
 export interface IFrameBasedClock extends IClock
 {
+  readonly isFrameBasedClock: true;
+
   get elapsedFrameTime(): number;
 
   get framesPerSecond(): number;
@@ -10,11 +12,9 @@ export interface IFrameBasedClock extends IClock
   get timeInfo(): FrameTimeInfo;
 
   processFrame(): void;
-
-  readonly isFrameBasedClock: true;
 }
 
 export function isFrameBasedClock(clock: IClock): clock is IFrameBasedClock
 {
-  return (clock as IFrameBasedClock).isFrameBasedClock;
+  return (clock as Partial<IFrameBasedClock>).isFrameBasedClock === true;
 }

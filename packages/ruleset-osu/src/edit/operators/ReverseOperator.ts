@@ -41,7 +41,7 @@ export class ReverseOperator extends Operator
 
       if (object instanceof Slider && this.reverseSliders)
       {
-        let controlPoints = object.path.controlPoints;
+        let controlPoints = object.controlPoints;
 
         if (this.exact)
         {
@@ -93,7 +93,7 @@ export class ReverseOperator extends Operator
               ),
           );
         }
-        object.path.controlPoints = reversed;
+        object.controlPoints = reversed;
         object.moveBy(lastPoint.position.x, lastPoint.position.y);
       }
 

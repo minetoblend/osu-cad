@@ -16,7 +16,10 @@ export class BeatmapInfo extends ObjectDDS
     super(BeatmapInfo.attributes);
   }
 
+  public readonly audioFileBindable = new Bindable("");
+
   @type("string")
+  @bindableBacked("audioFileBindable")
   public accessor audioFile = "";
 
   public readonly backgroundFileBindable = new Bindable("");

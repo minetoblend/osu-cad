@@ -126,6 +126,12 @@ export class HitObjectCollection
     return true;
   }
 
+  public addRange(hitObjects: Iterable<HitObject>)
+  {
+    for (const h of hitObjects)
+      this.add(h);
+  }
+
   public ensureAttached(hitObject: HitObject)
   {
     if (hitObject.isAttached())
