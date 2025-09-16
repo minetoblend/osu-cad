@@ -47,8 +47,6 @@ export function visualTests(): Plugin
           import { Bindable } from "@osucad/framework";
           import { TestBrowser } from "@osucad/visual-tests";
           
-          console.log("${glob}")
-          
           export const tests = new Bindable(import.meta.glob("${glob}", {
             query: "testscene",
             eager: false,

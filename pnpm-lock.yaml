@@ -369,6 +369,9 @@ importers:
         specifier: ^4.8.1
         version: 4.8.1
     devDependencies:
+      '@osucad/visual-tests':
+        specifier: workspace:^
+        version: link:../visual-tests
       vitest:
         specifier: ^3.0.0
         version: 3.1.2(@types/node@18.16.9)(@vitest/ui@3.1.2)(jiti@2.4.2)(jsdom@22.1.0)
