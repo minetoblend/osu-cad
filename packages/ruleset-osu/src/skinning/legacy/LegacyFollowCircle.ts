@@ -39,7 +39,7 @@ export class LegacyFollowCircle extends CompositeDrawable
 
     const remainingTime = slider.duration;
 
-    if (slider.path.controlPoints.length === 0 || slider.path.expectedDistance <= 0)
+    if (slider.controlPoints.length === 0 || slider.path.distance <= 0)
     {
       this.fadeOut();
       return;

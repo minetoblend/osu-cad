@@ -294,9 +294,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
         .add(center);
 
       if (h instanceof Slider)
-      {
-        h.path.controlPoints = h.path.controlPoints.map(p => p.rotated(angle));
-      }
+        h.controlPoints = h.controlPoints.map(p => p.rotated(angle));
     }
 
     this.history.commit();

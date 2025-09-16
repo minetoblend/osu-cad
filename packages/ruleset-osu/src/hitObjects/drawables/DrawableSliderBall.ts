@@ -57,7 +57,7 @@ export class DrawableSliderBall extends CompositeDrawable
       this.ball.scaleX = slider.spanAt(completionProgress) % 2 == 1 ? -1 : 1;
 
     const position = this.position = slider.curvePositionAt(completionProgress);
-    const diff = position.sub(slider.curvePositionAt(Math.min(1, completionProgress + 0.1 / slider.path.expectedDistance)));
+    const diff = position.sub(slider.curvePositionAt(Math.min(1, completionProgress + 0.1 / slider.expectedDistance)));
 
     if (diff.length() < 0.05)
       return;

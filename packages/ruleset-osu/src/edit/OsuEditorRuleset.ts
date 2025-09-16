@@ -24,7 +24,6 @@ export class OsuEditorRuleset extends EditorRuleset
       HitCircle,
       Slider,
       Spinner,
-      SliderPath,
       SliderVelocityPoint,
     ],
   };

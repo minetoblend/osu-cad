@@ -117,7 +117,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 
       if (this.#insertionIndex > 0)
       {
-        const controlPoints = this.slider.path.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
+        const controlPoints = this.slider.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
 
         const segments = PathSegment.fromPathPoints(controlPoints);
 
@@ -154,9 +154,9 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         this.#previewPath.position = this.slider.stackedPosition;
 
         const [p1, center, p2] = [
-          this.slider.path.controlPoints[this.insertionIndex - 1].position,
+          this.slider.controlPoints[this.insertionIndex - 1].position,
           this.#insertionPosition,
-          this.slider.path.controlPoints[this.insertionIndex]?.position,
+          this.slider.controlPoints[this.insertionIndex]?.position,
         ].filter(it => !!it)
           .map(p =>
             this.#playfield.toSpaceOfOtherDrawable(p.add(this.slider.stackedPosition), this),
@@ -209,7 +209,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         this.#selection.add(this.slider);
       }
 
-      this.slider.path.controlPoints = this.slider.path.controlPoints
+      this.slider.controlPoints = this.slider.controlPoints
         .toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
       this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);
 
@@ -249,14 +249,14 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     if (this.#insertedIndex === 0)
       return false;
 
-    const controlPoints = [...this.slider.path.controlPoints];
+    const controlPoints = [...this.slider.controlPoints];
 
     controlPoints[this.#insertedIndex] = controlPoints[this.#insertedIndex].withPosition(
         this.#playfield.toLocalSpace(e.screenSpaceMousePosition)
           .sub(this.slider.stackedPosition),
     );
 
-    this.slider.path.controlPoints = controlPoints;
+    this.slider.controlPoints = controlPoints;
     this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);
 
     return true;
@@ -274,7 +274,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     let minIndex = -1;
     let minDistance = Number.MAX_VALUE;
 
-    const controlPoints = this.slider.path.controlPoints;
+    const controlPoints = this.slider.controlPoints;
     const mousePosition = this.#playfield.toLocalSpace(this.#inputManager.currentState.mouse.position).sub(this.slider.stackedPosition);
 
     for (const { position } of controlPoints)
@@ -370,7 +370,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
 
     if (e.button === MouseButton.Right)
     {
-      let controlPoints = [...this.slider.path.controlPoints];
+      let controlPoints = [...this.slider.controlPoints];
 
       if (this.index > controlPoints.length)
         return false;
@@ -391,7 +391,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
         controlPoints = controlPoints.map((p) => p.movedBy(offset));
       }
 
-      this.slider.path.controlPoints = controlPoints;
+      this.slider.controlPoints = controlPoints;
       this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);
       this.#history.commit();
 
@@ -403,7 +403,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
 
   #cyclePathType()
   {
-    const controlPoints = [...this.slider.path.controlPoints];
+    const controlPoints = [...this.slider.controlPoints];
 
     if (this.index > controlPoints.length)
       return;
@@ -415,7 +415,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
     if (newPoint.type !== null)
       this.#pathTypeIndicator.flashPathType(newPoint.type, this.toScreenSpace(Vec2.zero()));
 
-    this.slider.path.controlPoints = controlPoints;
+    this.slider.controlPoints = controlPoints;
     this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);
     this.#history.commit();
   }
@@ -433,7 +433,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
 
     const delta = position.sub(lastPosition);
 
-    const controlPoints = [...this.slider.path.controlPoints];
+    const controlPoints = [...this.slider.controlPoints];
 
     if (this.index > controlPoints.length)
       return false;
@@ -452,7 +452,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
       controlPoints[this.index] = controlPoints[this.index].movedBy(delta);
     }
 
-    this.slider.path.controlPoints = controlPoints;
+    this.slider.controlPoints = controlPoints;
     this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);
 
     return true;

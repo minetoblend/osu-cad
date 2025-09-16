@@ -72,7 +72,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
     if (position.distance(lastPoint.position) < 10)
     {
-      this.hitObject.path.controlPoints = [...this.#path];
+      this.hitObject.controlPoints = [...this.#path];
       this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
       return;
     }
@@ -82,7 +82,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     if (!this.#explicitPathType)
       this.applyAutomaticPathType(path);
 
-    this.hitObject.path.controlPoints = path;
+    this.hitObject.controlPoints = path;
     this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
 
     let repeatCount = 0;

@@ -123,10 +123,8 @@ export class SnapManager extends Component
 
       if (this.sliderAnchors.value)
       {
-        for (let i = 1; i < hitObject.path.controlPoints.length; i++)
-        {
-          yield hitObject.path.controlPoints[i].position.add(position);
-        }
+        for (let i = 1; i < hitObject.controlPoints.length; i++)
+          yield hitObject.controlPoints[i].position.add(position);
       }
 
       if (this.blankets.value)

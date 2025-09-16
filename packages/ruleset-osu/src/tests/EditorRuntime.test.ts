@@ -41,8 +41,8 @@ describe("EditorRuntime", () =>
 
     const slider2 = runtime2.root.hitObjects.hitObjects[1] as Slider;
 
-    slider2.path.controlPoints = [new PathPoint(Vec2.zero(), PathType.Linear), new PathPoint(new Vec2(100, 0))];
-    slider2.path.expectedDistance = 100;
+    slider2.controlPoints = [new PathPoint(Vec2.zero(), PathType.Linear), new PathPoint(new Vec2(100, 0))];
+    slider2.expectedDistance = 100;
 
     expect(slider1.path.calculatedPath.vertices).toStrictEqual([
       new Vec2(0, 0),
