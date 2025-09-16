@@ -1,4 +1,3 @@
-import { Axes, Box } from "@osucad/framework";
 import { TestScene } from "./TestScene";
 
 export default class TestTestScene extends TestScene
@@ -6,9 +5,5 @@ export default class TestTestScene extends TestScene
   protected override loadComplete()
   {
     super.loadComplete();
-
-    this.addInternal(new Box({
-      relativeSizeAxes: Axes.Both,
-    }));
   }
 }
