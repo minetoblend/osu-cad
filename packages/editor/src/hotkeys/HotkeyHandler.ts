@@ -8,6 +8,10 @@ export interface HotkeyHandler
   onPress(this: Drawable, event: HotkeyEvent): boolean
 
   onRelease(this: Drawable, event: HotkeyEvent): void
+
+  createDrawable?(this: Drawable): Drawable
+
+  priority: number
 }
 
 export type HotKeyHandlerOptions = Pick<HotkeyHandler, "test"> & Partial<Omit<HotkeyHandler, "test">>;
@@ -19,5 +23,6 @@ export function defineHotkeyHandler(options: HotKeyHandlerOptions): HotkeyHandle
     onRelease: (event: HotkeyEvent) =>
     {},
     ...options,
+    priority: options.priority ?? 0,
   };
 }

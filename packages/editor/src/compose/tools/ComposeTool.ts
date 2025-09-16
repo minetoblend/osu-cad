@@ -1,6 +1,6 @@
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import type { InputManager, MouseButton } from "@osucad/framework";
-import { Axes, dependencyLoader, resolved } from "@osucad/framework";
+import { Anchor, Axes, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
@@ -8,6 +8,7 @@ import { ComposeToolContainer } from "./ComposeToolContainer";
 import { HotkeyContainer } from "../../hotkeys/HotkeyContainer";
 import type { ModalComposeTool } from "./ModalComposeTool";
 import type { ComposeToolInfo } from "./ComposeToolInfo";
+import { HotkeyBar } from "../../hotkeys/HotkeyBar";
 
 export abstract class ComposeTool extends HotkeyContainer
 {
@@ -22,6 +23,11 @@ export abstract class ComposeTool extends HotkeyContainer
     super.loadComplete();
 
     this.inputManager = this.getContainingInputManager()!;
+
+    this.addInternal(new HotkeyBar(this).with({
+      anchor: Anchor.BottomLeft,
+      origin: Anchor.BottomLeft,
+    }));
   }
 
   protected inputManager!: InputManager;

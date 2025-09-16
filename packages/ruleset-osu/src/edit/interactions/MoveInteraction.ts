@@ -64,7 +64,7 @@ export class MoveInteraction extends ModalComposeTool
   @Hotkeys.toggle.keyDown("KeypadMinus")
   private readonly negative = new BindableBoolean(false);
 
-  @Hotkeys.toggle.key("Shift")
+  @Hotkeys.toggle.key("Shift", { label: "Show Snap Targets" })
   private readonly showSnapTargets = new BindableBoolean(false);
 
   private readonly axis = new Bindable<"x" | "y" | null>(null);
@@ -81,7 +81,7 @@ export class MoveInteraction extends ModalComposeTool
   }
 
 
-  @Hotkeys.key("B")
+  @Hotkeys.key("B", { label: "Pick Snap Target" })
   private pickSnapTargets()
   {
     this.history.discardUncommittedChanges();
@@ -101,11 +101,11 @@ export class MoveInteraction extends ModalComposeTool
     });
   }
 
-  @Hotkeys.toggle.keyDown("T")
-  @Hotkeys.toggle.key("Control")
+  @Hotkeys.toggle.keyDown("T", { label: "Grid snap" })
+  @Hotkeys.toggle.key("Control", { label: "Invert grid snap" })
   private readonly snapped = new BindableBoolean(false);
 
-  @Hotkeys.toggle.key("Shift")
+  @Hotkeys.toggle.key("Shift", { label: "Precision mode" })
   private readonly preciseMode = new BindableBoolean(false);
 
 
@@ -377,14 +377,14 @@ export class MoveInteraction extends ModalComposeTool
     return value.toFixed(1);
   }
 
-  @Hotkeys.key("MouseLeftButton")
+  @Hotkeys.key("MouseLeftButton", { label: "Confirm", priority: Number.MAX_VALUE })
   @Hotkeys.key("Enter")
   #complete()
   {
     this.complete();
   }
 
-  @Hotkeys.key("MouseRightButton")
+  @Hotkeys.key("MouseRightButton", { label: "Cancel", priority: Number.MAX_VALUE })
   @Hotkeys.key("Escape")
   #cancel()
   {

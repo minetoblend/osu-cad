@@ -6,6 +6,7 @@ import { HotkeyKeyEvent } from "./HotkeyEvent";
 import type { ActionOrActionType, Bindable, Drawable, KeyBindingAction, KeyCombinationString } from "@osucad/framework";
 import { InputKey } from "@osucad/framework";
 import { KeyCombination, KeyCombinationMatchingMode } from "@osucad/framework";
+import { DrawableKeyCombinationHotKey } from "./DrawableKeyCombinationHotKey";
 
 export namespace Hotkeys
 {
@@ -35,8 +36,15 @@ export namespace Hotkeys
     ];
   }
 
+  export interface HotkeyOptions
+  {
+    label?: string
+    priority?: number
+  }
+
   export function key(
     keys: KeyCombinationString | InputKey[],
+    { label, priority }: HotkeyOptions = {},
   )
   {
     const keyCombination = typeof keys === "string" ? KeyCombination.parse(keys) : KeyCombination.from(...keys);
@@ -47,10 +55,14 @@ export namespace Hotkeys
     ) =>
     {
       addHandler(context, {
+        priority,
         test: event =>
           event instanceof HotkeyKeyEvent
             && keyCombination.isPressed(event.keyCombination, KeyCombinationMatchingMode.Modifiers),
         onPress: (event: HotkeyEvent) => target.call(event.target, event as HotkeyKeyEvent) ?? true,
+        createDrawable: label
+            ? () => new DrawableKeyCombinationHotKey(keyCombination, label)
+            : undefined,
       });
     };
   }
@@ -73,7 +85,10 @@ export namespace Hotkeys
 
   export namespace toggle
   {
-    export function key(keys: KeyCombinationString | InputKey[])
+    export function key(
+      keys: KeyCombinationString | InputKey[],
+      { label, priority }: HotkeyOptions = {},
+    )
     {
       const keyCombination = typeof keys === "string" ? KeyCombination.parse(keys) : KeyCombination.from(...keys);
 
@@ -85,6 +100,7 @@ export namespace Hotkeys
       ) =>
       {
         addHandler(context, {
+          priority,
           test: event =>
             event instanceof HotkeyKeyEvent
               && keyCombination.isPressed(event.keyCombination, KeyCombinationMatchingMode.Modifiers),
@@ -100,11 +116,17 @@ export namespace Hotkeys
             bindable.value = !bindable.value;
             return true;
           },
+          createDrawable: label
+              ? () => new DrawableKeyCombinationHotKey(keyCombination, label)
+              : undefined,
         });
       };
     }
 
-    export function keyDown(keys: KeyCombinationString | InputKey[])
+    export function keyDown(
+      keys: KeyCombinationString | InputKey[],
+      { label, priority }: HotkeyOptions = {},
+    )
     {
       const keyCombination = typeof keys === "string" ? KeyCombination.parse(keys) : KeyCombination.from(...keys);
 
@@ -116,6 +138,7 @@ export namespace Hotkeys
       ) =>
       {
         addHandler(context, {
+          priority,
           test: event =>
             event instanceof HotkeyKeyEvent
               && keyCombination.isPressed(event.keyCombination, KeyCombinationMatchingMode.Modifiers),
@@ -125,6 +148,9 @@ export namespace Hotkeys
             bindable.value = !bindable.value;
             return true;
           },
+          createDrawable: label
+              ? () => new DrawableKeyCombinationHotKey(keyCombination, label)
+              : undefined,
         });
       };
     }
