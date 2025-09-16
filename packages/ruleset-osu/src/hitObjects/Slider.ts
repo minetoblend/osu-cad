@@ -331,7 +331,7 @@ export class Slider extends OsuHitObject
 
     if (time > this.startTime + duration)
     {
-      const beatLength = controlPointInfo.timingPointAt(this.startTime).beatLength;
+      const beatLength = controlPointInfo.timingPointAt(this.startTime + duration).beatLength;
 
       time -= beatLength / divisor;
     }

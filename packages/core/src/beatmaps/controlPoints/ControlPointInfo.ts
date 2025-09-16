@@ -107,7 +107,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     return undefined;
   }
 
-  public snap(time: number, divisor: number)
+  public snap(time: number, divisor: number): number
   {
     const timingPoint = this.timingPointAt(time);
 
@@ -119,6 +119,9 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 
     const closestBeat = beats < 0 ? -Math.round(-beats) : Math.round(beats);
     const snappedTime = timingPoint.time + closestBeat * beatSnapLength;
+
+    if (this.timingPointAt(snappedTime) !== timingPoint)
+      return this.snap(snappedTime, divisor);
 
     if (snappedTime >= 0)
       return snappedTime;
