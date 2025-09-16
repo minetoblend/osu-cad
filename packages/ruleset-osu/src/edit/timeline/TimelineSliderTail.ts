@@ -1,10 +1,9 @@
-import type { DragStartEvent, DragEvent, DragEndEvent, MouseDownEvent } from "@osucad/framework";
-import { clamp } from "@osucad/framework";
-import { Anchor, Axes, CompositeDrawable, resolved, Vec2 } from "@osucad/framework";
-import { OsuSkinComponents } from "../../skinning";
-import { OsuHitObject } from "../../hitObjects";
 import { SkinnableDrawable } from "@osucad/core";
 import { BindableBeatDivisor, ComposeTimeline, EditorBeatmap, EditorHistory, TimelineBlueprint } from "@osucad/editor";
+import type { DragEndEvent, DragEvent, DragStartEvent } from "@osucad/framework";
+import { Anchor, Axes, clamp, CompositeDrawable, resolved, Vec2 } from "@osucad/framework";
+import { OsuHitObject } from "../../hitObjects";
+import { OsuSkinComponents } from "../../skinning";
 import type { SliderTimelineBlueprint } from "./SliderTimelineBlueprint";
 
 export class TimelineSliderTail extends CompositeDrawable
@@ -42,7 +41,6 @@ export class TimelineSliderTail extends CompositeDrawable
   {
     this.#selectionOverlay.alpha = value ? 1 : 0;
   }
-
 
   protected override onDragStart(e: DragStartEvent)
   {
