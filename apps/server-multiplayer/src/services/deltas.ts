@@ -17,10 +17,21 @@ export class LocalDeltaStore implements IDeltaStorage
 {
   readonly #deltas = new Map<string, IRemoteDocumentMessage[]>();
 
+  #timeout?: ReturnType<typeof setTimeout>;
+
   public async append(documentId: string, deltas: IRemoteDocumentMessage[]): Promise<void>
   {
     if (deltas.length === 0)
       return;
+
+    // TODO: temporary clearing all state after 30 minutes of inactivity
+    if (this.#timeout)
+      clearTimeout(this.#timeout);
+
+    this.#timeout = setTimeout(() =>
+    {
+      this.#deltas.clear();
+    }, 30 * 60 * 1000);
 
     const existing = this.#deltas.get(documentId);
 
