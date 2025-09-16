@@ -424,6 +424,10 @@ importers:
       pixi.js:
         specifier: ^8.13.1
         version: 8.13.1
+    devDependencies:
+      '@osucad/visual-tests':
+        specifier: workspace:^
+        version: link:../visual-tests
 
   packages/storybook-preset-vite:
     dependencies:

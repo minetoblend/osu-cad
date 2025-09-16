@@ -16,6 +16,9 @@
       "path": "../core"
     },
     {
+      "path": "../visual-tests"
+    },
+    {
       "path": "./tsconfig.lib.json"
     },
     {

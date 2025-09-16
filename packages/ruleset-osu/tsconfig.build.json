@@ -25,6 +25,9 @@
     },
     {
       "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../visual-tests/tsconfig.build.json"
     }
   ]
 }

@@ -1,4 +1,5 @@
 /// <reference types='vitest' />
+import { visualTests } from "@osucad/visual-tests/plugin";
 import { defaultClientConditions, defineConfig } from "vite";
 
 import { dependencies } from "./package.json";
@@ -12,6 +13,9 @@ export default defineConfig(() => ({
       ...(process.env.NODE_ENV === "development" ? ["source"] : []),
     ],
   },
+  plugins: [
+    visualTests(),
+  ],
   build: {
     outDir: "./dist",
     emptyOutDir: false,

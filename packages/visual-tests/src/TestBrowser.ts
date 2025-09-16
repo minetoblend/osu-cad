@@ -1,6 +1,6 @@
 import type { ClickEvent } from "@osucad/framework";
 import { Anchor, Axes, BasicScrollContainer, Bindable, BindableWithCurrent, Box, CompositeDrawable, Container, Direction, FillDirection, FillFlowContainer, SpriteText } from "@osucad/framework";
-import { useTests } from "./collect";
+import type { TestSceneWrapper } from "./collect";
 import type { TestScene } from "./TestScene";
 import { TestSceneContainer } from "./TestSceneContainer";
 
@@ -8,11 +8,15 @@ export class TestBrowser extends CompositeDrawable
 {
   readonly #buttons: FillFlowContainer;
 
-  public constructor()
+  public constructor(
+    private readonly testScenes: Bindable<Record<string, () => Promise<TestSceneWrapper>>>,
+  )
   {
     super();
 
     this.relativeSizeAxes = Axes.Both;
+
+    import("./style.css");
 
     this.internalChildren = [
       new Container({
@@ -41,12 +45,8 @@ export class TestBrowser extends CompositeDrawable
     ];
   }
 
-  private readonly testScenes = useTests();
-
-  private readonly activeTestSceneId = new Bindable<string>("");
+  private readonly activeTestSceneId = new Bindable<string>(window.location.hash?.slice(1));
   private readonly activeTestSceneClass = new BindableWithCurrent<(new () => TestScene) | undefined>(undefined);
-
-  #activeTestScene?: TestScene;
 
   protected override loadComplete()
   {
@@ -60,7 +60,6 @@ export class TestBrowser extends CompositeDrawable
       this.#buttons.clear();
       for (const key in e.value)
         this.#buttons.add(new TestButton(key, this.activeTestSceneId));
-
     }, true);
 
     this.activeTestSceneId.bindValueChanged(e =>
@@ -79,6 +78,8 @@ export class TestBrowser extends CompositeDrawable
     const loader = this.testScenes.value[id];
     if (!loader)
       return;
+
+    history.replaceState({}, "", location.pathname + "#" + id);
 
     this.#pending?.cancel();
 
