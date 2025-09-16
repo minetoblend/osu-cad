@@ -27,7 +27,7 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/framework": "1.1.2",
+    "@osucad/framework": "workspace:^",
     "@osucad/multiplayer-core": "workspace:^",
     "@vueuse/core": "^13.1.0",
     "async": "^3.2.6",

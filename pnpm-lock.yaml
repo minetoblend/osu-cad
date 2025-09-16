@@ -235,9 +235,15 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      express:
+        specifier: ^4.21.2
+        version: 4.21.2
       isomorphic-git:
         specifier: ^1.33.1
         version: 1.33.1
+      pixi.js:
+        specifier: ^8.13.2
+        version: 8.13.2
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
@@ -320,7 +326,7 @@ importers:
   packages/core:
     dependencies:
       '@osucad/framework':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../framework
       '@osucad/multiplayer-core':
         specifier: workspace:^
@@ -345,10 +351,10 @@ importers:
   packages/editor:
     dependencies:
       '@osucad/core':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../core
       '@osucad/framework':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../framework
       '@osucad/multiplayer-client':
         specifier: workspace:^
@@ -413,13 +419,13 @@ importers:
   packages/ruleset-osu:
     dependencies:
       '@osucad/core':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../core
       '@osucad/editor':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../editor
       '@osucad/framework':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../framework
       '@osucad/multiplayer-core':
         specifier: workspace:^
@@ -524,7 +530,7 @@ importers:
   packages/visual-tests:
     dependencies:
       '@osucad/framework':
-        specifier: 1.1.2
+        specifier: workspace:^
         version: link:../framework
       pixi.js:
         specifier: ^8.13.1
@@ -9550,6 +9556,22 @@ packages:
 
   /pixi.js@8.13.1:
     resolution: {integrity: sha512-n7lP3FG8noZV00O6ZTUNWQGg2j6xNjK/8TiGviptb4kfyGJvP4zMvF8s6DR0BymZ8P/lix/3Ye5rqilynpl/+g==}
+    dependencies:
+      '@pixi/colord': 2.9.6
+      '@types/css-font-loading-module': 0.0.12
+      '@types/earcut': 3.0.0
+      '@webgpu/types': 0.1.60
+      '@xmldom/xmldom': 0.8.10
+      earcut: 3.0.2
+      eventemitter3: 5.0.1
+      gifuct-js: 2.1.2
+      ismobilejs: 1.1.1
+      parse-svg-path: 0.1.2
+      tiny-lru: 11.4.5
+    dev: false
+
+  /pixi.js@8.13.2:
+    resolution: {integrity: sha512-9KVGZ4a99TA5SwUEWs9m5gliX6XUCS1aGc/DOPsXxpqLMDRa+FhzpT5ao9z1UwLYJkSvt3rcQs+aZXECBHSSHg==}
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12

@@ -31,7 +31,7 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/framework": "1.1.2",
+    "@osucad/framework": "workspace:^",
     "pixi.js": "^8.13.1"
   },
   "devDependencies": {

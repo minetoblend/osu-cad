@@ -40,8 +40,8 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/core": "1.1.2",
-    "@osucad/framework": "1.1.2",
+    "@osucad/core": "workspace:^",
+    "@osucad/framework": "workspace:^",
     "@osucad/multiplayer-client": "workspace:^",
     "@osucad/multiplayer-core": "workspace:^",
     "@osucad/multiplayer-protocol": "workspace:^",
