@@ -61,16 +61,16 @@ export class RotateInteraction extends ModalComposeTool
     ];
   }
 
-  @Hotkeys.toggle.key("Shift")
+  @Hotkeys.toggle.key("Shift", { label: "Precision mode" })
   private readonly precise = new BindableBoolean(false);
 
-  @Hotkeys.toggle.key("Control")
-  @Hotkeys.toggle.keyDown("Shift+Tab")
+  @Hotkeys.toggle.key("Control", { label:  "Snap" })
+  @Hotkeys.toggle.keyDown("Shift+Tab", { label: "Snap Invert" })
   private readonly snapped = new BindableBoolean(false);
 
   private readonly transformOrigin = new Bindable<TransformOrigin>({ type: "playfield_center" });
 
-  @Hotkeys.key("B")
+  @Hotkeys.key("B", { label: "Pick Rotation Origin" })
   #pickOrigin()
   {
     this.#history.discardUncommittedChanges();
@@ -85,13 +85,13 @@ export class RotateInteraction extends ModalComposeTool
     });
   }
 
-  @Hotkeys.key("P")
+  @Hotkeys.key("P", { label: "Rotate around Playfield Center" })
   #setOriginToPlayfieldCenter()
   {
     this.transformOrigin.value = { type: "playfield_center" };
   }
 
-  @Hotkeys.key("S")
+  @Hotkeys.key("S", { label: "Rotate around Selection Center" })
   #setOriginToSelectionCenter()
   {
     if (OsuOperatorUtils.getBounds(this.#selection)?.size.isZero !== false)
@@ -190,6 +190,9 @@ export class RotateInteraction extends ModalComposeTool
 
   #updateState()
   {
+    if (this.toolContainer.activeSubTool !== this)
+      return;
+
     this.#history.discardUncommittedChanges();
 
     const origin = this.#lastOrigin = this.resolveOrigin();
@@ -255,17 +258,31 @@ export class RotateInteraction extends ModalComposeTool
     this.history.commit();
   }
 
-  @Hotkeys.key("MouseLeftButton")
+  @Hotkeys.key("MouseLeftButton", { label: "Confirm", priority: Number.MAX_VALUE })
   @Hotkeys.key("Enter")
   #complete()
   {
     this.complete();
   }
 
-  @Hotkeys.key("MouseRightButton")
+  @Hotkeys.key("MouseRightButton",{ label: "Cancel", priority: Number.MAX_VALUE })
   @Hotkeys.key("Escape")
   #cancel()
   {
     this.cancel();
+  }
+
+  protected override onCompleted(result?: void)
+  {
+    super.onCompleted(result);
+
+    this.history.commit();
+  }
+
+  protected override onCanceled()
+  {
+    super.onCanceled();
+
+    this.history.discardUncommittedChanges();
   }
 }

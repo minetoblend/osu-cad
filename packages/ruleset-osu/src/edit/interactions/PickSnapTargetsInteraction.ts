@@ -36,7 +36,7 @@ export class PickSnapTargetsInteraction extends ModalComposeTool<Vec2[]>
     ];
   }
 
-  @Hotkeys.key("A")
+  @Hotkeys.key("A", { label: "Add Snap Target" })
   #addSnapTarget()
   {
     const position = this.snapTargetAtMousePosition.position;
@@ -48,7 +48,7 @@ export class PickSnapTargetsInteraction extends ModalComposeTool<Vec2[]>
     this.#snapTargetContainer.add(new SnapTargetMarker(position));
   }
 
-  @Hotkeys.key("Alt+A")
+  @Hotkeys.key("Alt+A", { label: "Remove Last Snap Target" })
   #removeLastSnapTarget()
   {
     const point = this.result.pop();
@@ -106,7 +106,7 @@ export class PickSnapTargetsInteraction extends ModalComposeTool<Vec2[]>
     };
   }
 
-  @Hotkeys.key("B")
+  @Hotkeys.key("B", { label: "Clear Snap Target" })
   #returnEmptyResult()
   {
     this.complete();

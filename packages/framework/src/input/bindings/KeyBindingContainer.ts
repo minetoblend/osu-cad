@@ -20,7 +20,17 @@ const log = debug("KeyBindingContainer");
 
 export abstract class BaseKeyBindingContainer extends Container
 {
-  protected keyBindings: IKeyBinding[] | null = null;
+  #keyBindings: IKeyBinding[] | null = null;
+
+  public get keyBindings()
+  {
+    return this.#keyBindings;
+  }
+
+  protected set keyBindings(value)
+  {
+    this.#keyBindings = value;
+  }
 
   protected abstract get defaultKeyBindings(): IKeyBinding[];
 

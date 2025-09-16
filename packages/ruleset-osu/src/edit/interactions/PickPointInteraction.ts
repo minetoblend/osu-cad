@@ -73,14 +73,14 @@ export class PickPointInteraction extends ModalComposeTool<Vec2>
     this.#cursor.position = this.#playfield.toSpaceOfOtherDrawable(this.result, this);
   }
 
-  @Hotkeys.key("MouseLeftButton")
+  @Hotkeys.key("MouseLeftButton", { label: "Confirm" })
   @Hotkeys.key("Enter")
   #complete()
   {
     this.complete(this.result);
   }
 
-  @Hotkeys.key("MouseRightButton")
+  @Hotkeys.key("MouseRightButton", { label: "Cancel" })
   @Hotkeys.key("Escape")
   #cancel()
   {

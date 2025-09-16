@@ -10,7 +10,7 @@ export class HotkeyBar extends CompositeDrawable
   {
     super();
 
-    this.height = 24;
+    this.height = 26;
     this.relativeSizeAxes = Axes.X;
 
     const children = Hotkeys.getHotkeys(target)

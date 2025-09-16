@@ -7,6 +7,7 @@ import type { ActionOrActionType, Bindable, Drawable, KeyBindingAction, KeyCombi
 import { InputKey } from "@osucad/framework";
 import { KeyCombination, KeyCombinationMatchingMode } from "@osucad/framework";
 import { DrawableKeyCombinationHotKey } from "./DrawableKeyCombinationHotKey";
+import { DrawableKeyBindingHotkey } from "./DrawableKeyBindingHotkey";
 
 export namespace Hotkeys
 {
@@ -67,7 +68,10 @@ export namespace Hotkeys
     };
   }
 
-  export function keyBinding<Action extends KeyBindingAction>(action: ActionOrActionType<Action>)
+  export function keyBinding<Action extends KeyBindingAction>(
+    action: ActionOrActionType<Action>,
+    { label, priority }: HotkeyOptions = {},
+  )
   {
     return (
       target: KeyDownHandler<HotkeyKeyBindingEvent<Action>>,
@@ -75,10 +79,14 @@ export namespace Hotkeys
     ) =>
     {
       addHandler(context, {
+        priority,
         test: (event: HotkeyEvent) =>
           event instanceof HotkeyKeyBindingEvent
             && event.action.equals(action),
         onPress: (event: HotkeyEvent) => target.call(event.target, event as HotkeyKeyBindingEvent<Action>) ?? true,
+        createDrawable: label
+            ? () => new DrawableKeyBindingHotkey(action, label)
+            : undefined,
       });
     };
   }

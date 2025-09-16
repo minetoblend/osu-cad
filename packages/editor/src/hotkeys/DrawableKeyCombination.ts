@@ -1,6 +1,9 @@
 import type { Drawable, KeyCombination } from "@osucad/framework";
 import { Anchor, Axes, Box, CompositeDrawable, Container, DrawableSprite, FillDirection, FillFlowContainer, InputKey, loadTexture, SpriteText } from "@osucad/framework";
 import type { Texture } from "pixi.js";
+import mouseLeft from "./icons/mouse-left.png";
+import mouseMiddle from "./icons/mouse-middle.png";
+import mouseRight from "./icons/mouse-right.png";
 
 export class DrawableKeyCombination extends CompositeDrawable
 {
@@ -22,10 +25,6 @@ export class DrawableKeyCombination extends CompositeDrawable
   }
 }
 
-import mouseLeft from "./icons/mouse-left.png";
-import mouseMiddle from "./icons/mouse-middle.png";
-import mouseRight from "./icons/mouse-right.png";
-
 function createDrawableInputKey(key: InputKey): Drawable
 {
   let keyString = InputKey[key];
@@ -40,6 +39,13 @@ function createDrawableInputKey(key: InputKey): Drawable
     return createIcon(mouseRight);
   case InputKey.Control:
     keyString = "Ctrl";
+    break;
+  case InputKey.Period:
+    keyString = ".";
+    break;
+  case InputKey.Comma:
+    keyString = ",";
+    break;
   }
 
 
@@ -61,7 +67,7 @@ function createDrawableInputKey(key: InputKey): Drawable
         autoSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        padding: 4,
+        padding: { vertical: 2, horizontal: 4 },
         child: new SpriteText({
           text: keyString,
           style: {

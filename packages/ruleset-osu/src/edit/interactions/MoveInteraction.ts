@@ -89,12 +89,14 @@ export class MoveInteraction extends ModalComposeTool
 
     this.push(new PickSnapTargetsInteraction()).then(result =>
     {
+
       this.#snapTargets = result ?? [];
       this.#snapTargetContainer.clear();
       for (const p of this.#snapTargets)
         this.#snapTargetContainer.addMarker(p);
 
       this.#mousePosition = this.#playfield.toLocalSpace(this.#inputManager.currentState.mouse.position);
+      this.#mouseDelta = Vec2.zero();
       this.#inputString = "";
 
       this.invalidateState();

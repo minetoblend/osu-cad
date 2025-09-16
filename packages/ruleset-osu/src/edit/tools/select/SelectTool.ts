@@ -216,7 +216,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     this.history.commit();
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.ToggleNewCombo)
+  @Hotkeys.keyBinding(OsuEditorAction.ToggleNewCombo, { label: "New combo" })
   public toggleNewCombo()
   {
     const objects = [...this.selection];
@@ -234,8 +234,8 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.NudgeForward)
-  @Hotkeys.keyBinding(OsuEditorAction.NudgeBackward)
+  @Hotkeys.keyBinding(OsuEditorAction.NudgeForward, { label: "Nudge forward" })
+  @Hotkeys.keyBinding(OsuEditorAction.NudgeBackward, { label: "Nudge backward" })
   #nudgeStartTime(e: HotkeyKeyBindingEvent)
   {
     const objects = [...this.selection];
@@ -262,7 +262,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.MoveSelection)
+  @Hotkeys.keyBinding(OsuEditorAction.MoveSelection, { label: "Move" })
   #moveSelection()
   {
     if (this.selection.size > 0)
@@ -271,7 +271,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.Rotate)
+  @Hotkeys.keyBinding(OsuEditorAction.Rotate, { label: "Rotate" })
   #rotate()
   {
     if (this.selection.size > 0)
@@ -318,7 +318,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.FlipHorizontal)
+  @Hotkeys.keyBinding(OsuEditorAction.FlipHorizontal, { label: "Flip horizontal" })
   public flipHorizontal()
   {
     this.#composer.beginOperator(FlipOperator, [...this.selection], { horizontal: true });
@@ -326,7 +326,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.FlipVertical)
+  @Hotkeys.keyBinding(OsuEditorAction.FlipVertical, { label: "Flip vertical" })
   public flipVertical()
   {
     this.#composer.beginOperator(FlipOperator, [...this.selection], { vertical: true });
@@ -334,7 +334,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  @Hotkeys.keyBinding(OsuEditorAction.ReverseSelection)
+  @Hotkeys.keyBinding(OsuEditorAction.ReverseSelection, { label: "Reverse" })
   public reverseSelection()
   {
     this.#composer.beginOperator(ReverseOperator, [...this.selection]);

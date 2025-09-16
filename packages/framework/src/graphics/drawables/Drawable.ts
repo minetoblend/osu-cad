@@ -1280,7 +1280,7 @@ export abstract class Drawable extends Transformable implements IDrawable
     this.invalidate(this.invalidationFromParentSize | Invalidation.Presence | Invalidation.Parent);
   }
 
-  public findClosestParent<T extends Drawable>(predicate: (d: Drawable) => d is T): T | null
+  public *findParents<T extends Drawable>(predicate: (d: Drawable) => d is T): Generator<T, void, void>
   {
     let parent = this.parent;
 
@@ -1288,11 +1288,19 @@ export abstract class Drawable extends Transformable implements IDrawable
     {
       if (predicate(parent))
       {
-        return parent;
+        yield parent;
       }
 
       parent = parent.parent;
     }
+  }
+
+  public findClosestParent<T extends Drawable>(predicate: (d: Drawable) => d is T): T | null
+  {
+    const result = this.findParents(predicate).next();
+
+    if (!result.done)
+      return result.value;
 
     return null;
   }
