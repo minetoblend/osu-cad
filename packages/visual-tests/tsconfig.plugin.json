@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
+    "declaration": true
+  },
+  "include": [
+    "plugin.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

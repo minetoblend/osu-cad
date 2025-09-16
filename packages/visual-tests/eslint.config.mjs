@@ -1,7 +1,12 @@
 import baseConfig from "../../eslint.config.mjs";
+import { globalIgnores } from "eslint/config";
 
 export default [
   ...baseConfig,
+  globalIgnores([
+    "./plugin.d.ts",
+    "./plugin.js",
+  ]),
   {
     "files": [
       "**/*.json",

@@ -22,7 +22,8 @@
       "default": "./dist/index.js"
     },
     "./plugin": {
-      "import": "./plugin.ts"
+      "types": "./plugin.d.ts",
+      "import": "./plugin.js"
     }
   },
   "files": [
