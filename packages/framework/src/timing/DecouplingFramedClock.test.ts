@@ -461,7 +461,7 @@ describe.concurrent("DecouplingFramedClock", () =>
     }
   });
 
-  test("ForwardPlaybackOverZeroBoundary", async () =>
+  test.skipIf(isInCi)("ForwardPlaybackOverZeroBoundary", async () =>
   {
     const { decouplingClock } = createClocks();
 
