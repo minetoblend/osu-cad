@@ -22,12 +22,17 @@ import { SelectToolPresenceOverlay } from "./SelectToolPresenceOverlay";
 import iconUrl from "./icon.png";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 
+@ComposeTool.metadata({
+  id: "select",
+  label: "Select",
+  icon: iconUrl,
+  presenceOverlay: SelectToolPresenceOverlay,
+})
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
 {
   @resolved(HitObjectSelection)
   public accessor selection!: HitObjectSelection<OsuHitObject>;
-
 
 
   public snapProvider = new HitObjectSnapProvider();
@@ -377,13 +382,4 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
         h.moveBy(offset.x, offset.y);
     }
   }
-}
-
-export namespace SelectTool
-{
-  export const id = "select";
-  export const label = "Select";
-  export const icon = iconUrl;
-  export const tool = SelectTool;
-  export const presenceOverlay = SelectToolPresenceOverlay;
 }

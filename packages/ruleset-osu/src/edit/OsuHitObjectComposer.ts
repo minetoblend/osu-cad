@@ -1,4 +1,5 @@
-import { type ComposeToolInfo, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
+import type { ComposeToolClass } from "@osucad/editor";
+import { HitObjectComposer, HitObjectSelection } from "@osucad/editor";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { asyncDependencyLoader, DependencyContainer, provide, resolved } from "@osucad/framework";
 import type { OsuHitObject } from "../hitObjects";
@@ -19,7 +20,7 @@ export class OsuHitObjectComposer extends HitObjectComposer
     super();
   }
 
-  public getTools(): ComposeToolInfo[]
+  public getTools(): ComposeToolClass[]
   {
     return [
       SelectTool,

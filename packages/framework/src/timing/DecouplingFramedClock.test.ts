@@ -427,8 +427,6 @@ describe.concurrent("DecouplingFramedClock", () =>
 
     while (decouplingClock.currentTime > -300)
     {
-      console.log(decouplingClock.currentTime);
-
       expect(source.isRunning).toBe(false);
       expect(decouplingClock.currentTime).toBeLessThanOrEqual(time);
       time = decouplingClock.currentTime;

@@ -7,6 +7,7 @@ import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 import { ComposeToolContainer } from "./ComposeToolContainer";
 import { HotkeyContainer } from "../../hotkeys/HotkeyContainer";
 import type { ModalComposeTool } from "./ModalComposeTool";
+import type { ComposeToolInfo } from "./ComposeToolInfo";
 
 export abstract class ComposeTool extends HotkeyContainer
 {
@@ -111,4 +112,52 @@ export abstract class ComposeTool extends HotkeyContainer
       this.toolContainer.push(modal);
     });
   }
+
+  declare private static _info: ComposeToolInfo;
+
+  public static get info(): ComposeToolInfo
+  {
+    if (!this._info)
+      throw new Error("ComposeTool must be decorated with ComposeTool.metadata");
+
+    return this._info;
+  }
+
+  public static get id()
+  {
+    return this.info.id;
+  }
+
+  public static get label()
+  {
+    return this.info.label;
+  }
+
+  public static get icon()
+  {
+    return this.info.icon;
+  }
+
+  public static get presenceOverlay()
+  {
+    return this.info.presenceOverlay;
+  }
+}
+
+export type ComposeToolClass = (new () => ComposeTool) & ComposeToolInfo;
+
+export namespace ComposeTool
+{
+
+
+  export function metadata<T extends ComposeTool>(toolInfo: ComposeToolInfo)
+  {
+    return (
+      target: new () => T,
+    ) =>
+    {
+      (target as { _info?: ComposeToolInfo })._info = toolInfo;
+    };
+  }
+
 }

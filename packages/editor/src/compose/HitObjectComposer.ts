@@ -5,7 +5,7 @@ import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
 import type { Operator, OperatorContext } from "./operators";
 import { OperatorBox } from "./operators/OperatorBox";
-import type { ComposeToolInfo } from "./tools";
+import type { ComposeToolClass } from "./tools";
 import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";
 import { ComposeToolContainer } from "./tools/ComposeToolContainer";
@@ -140,9 +140,9 @@ export abstract class HitObjectComposer extends CompositeDrawable implements ISa
     return false;
   }
 
-  public tools!: ComposeToolInfo[];
+  public tools!: ComposeToolClass[];
 
-  protected abstract getTools(): ComposeToolInfo[];
+  protected abstract getTools(): ComposeToolClass[];
 
   #activeOperator?: Operator;
   #activeOperatorBox?: OperatorBox;

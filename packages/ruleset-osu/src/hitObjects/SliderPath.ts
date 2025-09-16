@@ -142,7 +142,7 @@ export class SliderPath
     const segments: PathSegment[] = [];
 
     let segmentStart = 0;
-    let segmentType = this.controlPoints[0].type ?? PathType.Bezier;
+    let segmentType = this.controlPoints[0]?.type ?? PathType.Bezier;
 
     for (let i = 1; i < this.controlPoints.length; i++)
     {

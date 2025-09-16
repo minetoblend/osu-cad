@@ -8,8 +8,14 @@ import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 import { OsuPlayfield } from "../../../ui";
 import iconUrl from "./icon.png";
 import { SnapManager } from "../../SnapManager";
+import { ComposeTool } from "@osucad/editor";
 
-
+@ComposeTool.metadata({
+  id: "circle",
+  label: "Hitcircle",
+  icon: iconUrl,
+  presenceOverlay: HitCircleToolPresenceOverlay,
+})
 export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
 {
   protected override createHitObject(): HitCircle
@@ -66,13 +72,4 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
       position: { ...this.hitObject.position },
     };
   }
-}
-
-export namespace HitCircleTool
-{
-  export const id = "circle";
-  export const label = "Hitcircle";
-  export const tool = HitCircleTool;
-  export const icon = iconUrl;
-  export const presenceOverlay = HitCircleToolPresenceOverlay;
 }

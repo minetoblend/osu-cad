@@ -46,12 +46,49 @@ export class PathSegment
   }
 
   #vertices?: Vec2[];
+  #cumulativeDistance?: number[];
 
-  public get vertices()
+  public get vertices(): Vec2[]
   {
-    this.#vertices ??= this.#getVertices();
+    this.#ensureVertices();
 
-    return this.#vertices;
+    return this.#vertices!;
+  }
+
+  public get cumulativeDistance(): number[]
+  {
+    this.#ensureVertices();
+
+    return this.#cumulativeDistance!;
+  }
+
+  #ensureVertices()
+  {
+    if (this.#vertices)
+      return;
+
+    const vertices = this.#vertices = this.#getVertices();
+    if(vertices.length === 0)
+    {
+      this.#cumulativeDistance = [];
+      return;
+    }
+
+    const cumulativeDistance = [0];
+    let last = vertices[0];
+
+    for (let i = 1; i < vertices.length; i++)
+    {
+      const p = vertices[i];
+
+      const distance = p.distance(last);
+
+      cumulativeDistance[i] = cumulativeDistance[i - 1] + distance;
+
+      last = p;
+    }
+
+    this.#cumulativeDistance = cumulativeDistance;
   }
 
   #getVertices()
@@ -76,13 +113,6 @@ export class PathSegment
 
   public get distance()
   {
-    let distance = 0;
-
-    const vertices = this.vertices;
-
-    for (let i = 0; i < vertices.length - 1; i++)
-      distance += vertices[i].distance(vertices[i+1]);
-
-    return distance;
+    return this.cumulativeDistance[this.cumulativeDistance.length - 1] ?? 0;
   }
 }

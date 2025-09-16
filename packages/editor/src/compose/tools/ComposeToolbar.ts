@@ -1,6 +1,6 @@
 import { Axes, Container, FillFlowContainer, Vec2 } from "@osucad/framework";
 import { ComposeToolButton } from "./ComposeToolButton";
-import type { ComposeToolInfo } from "./ComposeToolInfo";
+import type { ComposeToolClass } from "./ComposeTool";
 
 export class ComposeToolbar extends Container
 {
@@ -27,7 +27,7 @@ export class ComposeToolbar extends Container
     }));
   }
 
-  public addTool(tool: ComposeToolInfo)
+  public addTool(tool: ComposeToolClass)
   {
     this.add(new ComposeToolButton(tool));
   }

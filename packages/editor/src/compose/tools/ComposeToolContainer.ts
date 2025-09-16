@@ -1,8 +1,7 @@
 import type { ValueChangedEvent } from "@osucad/framework";
 import { Axes, CompositeDrawable, provideSelf, resolved } from "@osucad/framework";
 import { ActiveToolBindable } from "./ActiveToolBindable";
-import type { ComposeTool } from "./ComposeTool";
-import type { ComposeToolInfo } from "./ComposeToolInfo";
+import type { ComposeTool, ComposeToolClass } from "./ComposeTool";
 import type { ModalComposeTool } from "./ModalComposeTool";
 
 @provideSelf()
@@ -55,7 +54,7 @@ export class ComposeToolContainer extends CompositeDrawable
 
   #exited: ComposeTool[] = [];
 
-  public push(tool: ModalComposeTool<unknown>)
+  public push(tool: ModalComposeTool<any>)
   {
     this.#push(tool);
   }
@@ -101,7 +100,7 @@ export class ComposeToolContainer extends CompositeDrawable
       this.pop();
   }
 
-  #onToolChanged(e: ValueChangedEvent<ComposeToolInfo>)
+  #onToolChanged(e: ValueChangedEvent<ComposeToolClass>)
   {
     if (!e.value)
       return;

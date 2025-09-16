@@ -3,7 +3,6 @@ import { EditorRuleset, keyBinding } from "@osucad/editor";
 import type { Component, KeyBinding } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { Slider } from "../hitObjects/Slider";
-import { SliderPath } from "../hitObjects/SliderPath";
 import { Spinner } from "../hitObjects/Spinner";
 import type { OsuRuleset } from "../OsuRuleset";
 import { EditorComboProcessor } from "./EditorComboProcessor";

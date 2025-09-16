@@ -131,7 +131,7 @@ export class SnapManager extends Component
       {
         for (const segment of hitObject.path.pathSegments)
         {
-          if (segment.type !== PathType.PerfectCurve || segment.pathPoints.length !== 3)
+          if (segment.type !== PathType.PerfectCurve || segment.points.length !== 3)
             continue;
 
           const arc = PathApproximator.getCircularArcProperties(segment.points);

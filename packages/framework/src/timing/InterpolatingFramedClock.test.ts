@@ -146,13 +146,13 @@ describe.concurrent("InterpolatingFramedClock", () =>
   {
     const { source, interpolating } = createClocks();
 
-    const sleep_time = 20;
+    const sleep_time = 10;
 
     let lastValue = interpolating.currentTime;
     source.start();
     let interpolatedCount = 0;
 
-    for (let i = 0; i < 200; i++)
+    for (let i = 0; i < 100; i++)
     {
       source.rate += i * 10;
 

@@ -1,7 +1,7 @@
 import { Bindable } from "@osucad/framework";
-import type { ComposeToolInfo } from "./ComposeToolInfo";
+import type { ComposeToolClass } from "./ComposeTool";
 
-export class ActiveToolBindable extends Bindable<ComposeToolInfo>
+export class ActiveToolBindable extends Bindable<ComposeToolClass>
 {
   public override createInstance()
   {
