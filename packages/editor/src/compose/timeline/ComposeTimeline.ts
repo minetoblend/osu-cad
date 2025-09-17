@@ -3,6 +3,7 @@ import { Action, Anchor, Axes, Box, clamp, CompositeDrawable, Container, depende
 import { EditorClock } from "../../EditorClock";
 import { EditorRuleset } from "../../EditorRuleset";
 import { TimelineTickDisplay } from "./TimelineTickDisplay";
+import { ColorProvider } from "../../ColorProvider";
 
 @provideSelf()
 export class ComposeTimeline extends CompositeDrawable
@@ -12,7 +13,7 @@ export class ComposeTimeline extends CompositeDrawable
   #zoomedContent!: Container;
 
   @resolved(EditorClock)
-  accessor #editorClock!: EditorClock
+  accessor #editorClock!: EditorClock;
 
   @resolved(EditorRuleset)
   accessor #editorRulest!: EditorRuleset;
@@ -29,13 +30,15 @@ export class ComposeTimeline extends CompositeDrawable
   @dependencyLoader()
   #load()
   {
+    const colorProvider = this.dependencies.resolve(ColorProvider);
+
     this.relativeSizeAxes = Axes.X;
     this.height = ComposeTimeline.HEIGHT;
 
     this.internalChildren = [
       new Box({
         relativeSizeAxes: Axes.Both,
-        color: 0x222228,
+        color: colorProvider.background5,
         alpha: 0.6,
       }),
       this.#zoomedContent = new Container({

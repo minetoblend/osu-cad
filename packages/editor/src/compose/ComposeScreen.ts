@@ -1,5 +1,6 @@
 import type { HitObject } from "@osucad/core";
 import type { KeyBindingEvent, ScrollEvent } from "@osucad/framework";
+import { provideSelf } from "@osucad/framework";
 import { almostEquals, Axes, Container, DependencyContainer, keyBindingHandler, provide, type ReadonlyDependencyContainer, resolved } from "@osucad/framework";
 import { EditorAction } from "../EditorAction";
 import { EditorClock } from "../EditorClock";
@@ -7,8 +8,9 @@ import { EditorRuleset } from "../EditorRuleset";
 import { EditorScreen } from "../EditorScreen";
 import { EditorBeatmap } from "../runtime";
 import { HitObjectSelection } from "./HitObjectSelection";
-import { ComposeTimeline } from "./timeline/ComposeTimeline";
+import { ComposeTimeline } from "./timeline";
 
+@provideSelf()
 export class ComposeScreen extends EditorScreen
 {
   public constructor()
@@ -95,14 +97,14 @@ export class ComposeScreen extends EditorScreen
   @keyBindingHandler(EditorAction.SeekForward)
   public seekForward(e: KeyBindingEvent<EditorAction>)
   {
-    this.#editorClock.seekForward( true);
+    this.#editorClock.seekForward(true);
     return true;
   }
 
   @keyBindingHandler(EditorAction.SeekBackward)
   public seekBackward(e: KeyBindingEvent<EditorAction>)
   {
-    this.#editorClock.seekBackward( true);
+    this.#editorClock.seekBackward(true);
     return true;
   }
 

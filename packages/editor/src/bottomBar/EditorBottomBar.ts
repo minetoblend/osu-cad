@@ -2,6 +2,7 @@ import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, Dimension, Grid
 import { TimingInfoDisplay } from "./TimingInfoDisplay";
 import { PlayButton } from "./PlayButton";
 import { OverviewTimeline } from "./OverviewTimeline";
+import { ColorProvider } from "../ColorProvider";
 
 export class EditorBottomBar extends CompositeDrawable
 {
@@ -18,10 +19,12 @@ export class EditorBottomBar extends CompositeDrawable
   @dependencyLoader()
   #load()
   {
+    const colorProvider = this.dependencies.resolve(ColorProvider);
+
     this.internalChildren = [
       new Box({
         relativeSizeAxes: Axes.Both,
-        color: 0x222228,
+        color: colorProvider.background5,
         alpha: 0.5,
       }),
       new GridContainer({

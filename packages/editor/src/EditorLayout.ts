@@ -1,23 +1,28 @@
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader } from "@osucad/framework";
+import { Axes, CompositeDrawable, dependencyLoader, Dimension, GridContainer, GridSizeMode, provide } from "@osucad/framework";
 import { EditorBottomBar } from "./bottomBar/EditorBottomBar";
 import { ComposeScreen } from "./compose";
+import { StatusBar } from "./StatusBar";
 
 export class EditorLayout extends CompositeDrawable
 {
+  @provide(StatusBar)
+  readonly #statusBar = new StatusBar();
+
   @dependencyLoader()
   #load()
   {
     this.relativeSizeAxes = Axes.Both;
 
     this.internalChildren = [
-      new Container({
+      new GridContainer({
         relativeSizeAxes: Axes.Both,
-        padding: { bottom: EditorBottomBar.HEIGHT },
-        child: new ComposeScreen(),
-      }),
-      new EditorBottomBar().with({
-        anchor: Anchor.BottomCenter,
-        origin: Anchor.BottomCenter,
+        rowDimensions: [new Dimension(), new Dimension(GridSizeMode.AutoSize), new Dimension(GridSizeMode.AutoSize)],
+        columnDimensions: [new Dimension()],
+        content: [
+          [new ComposeScreen()],
+          [new EditorBottomBar()],
+          [this.#statusBar],
+        ],
       }),
     ];
   }

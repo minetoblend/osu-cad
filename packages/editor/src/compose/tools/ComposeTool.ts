@@ -1,6 +1,6 @@
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import type { InputManager, MouseButton } from "@osucad/framework";
-import { Anchor, Axes, dependencyLoader, resolved } from "@osucad/framework";
+import { Axes, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
@@ -8,7 +8,6 @@ import { ComposeToolContainer } from "./ComposeToolContainer";
 import { HotkeyContainer } from "../../hotkeys/HotkeyContainer";
 import type { ModalComposeTool } from "./ModalComposeTool";
 import type { ComposeToolInfo } from "./ComposeToolInfo";
-import { HotkeyBar } from "../../hotkeys/HotkeyBar";
 
 export abstract class ComposeTool extends HotkeyContainer
 {
@@ -23,35 +22,30 @@ export abstract class ComposeTool extends HotkeyContainer
     super.loadComplete();
 
     this.inputManager = this.getContainingInputManager()!;
-
-    this.addInternal(new HotkeyBar(this).with({
-      anchor: Anchor.BottomLeft,
-      origin: Anchor.BottomLeft,
-    }));
   }
 
   protected inputManager!: InputManager;
 
   @resolved(EditorBeatmap)
-  protected accessor beatmap!: EditorBeatmap
+  protected accessor beatmap!: EditorBeatmap;
 
   @resolved(EditorClock)
-  protected accessor editorClock!: EditorClock
+  protected accessor editorClock!: EditorClock;
 
   @resolved(BindableBeatDivisor)
-  protected accessor beatDivisor!: BindableBeatDivisor
+  protected accessor beatDivisor!: BindableBeatDivisor;
 
   @resolved(Playfield)
-  protected accessor playfield!: Playfield
+  protected accessor playfield!: Playfield;
 
   @resolved(DrawableRuleset)
-  protected accessor drawableRuleset!: DrawableRuleset
+  protected accessor drawableRuleset!: DrawableRuleset;
 
   @resolved(EditorHistory)
-  protected accessor history!: EditorHistory
+  protected accessor history!: EditorHistory;
 
   @resolved(ComposeToolContainer)
-  protected accessor toolContainer!: ComposeToolContainer
+  protected accessor toolContainer!: ComposeToolContainer;
 
   public override get removeWhenNotAlive(): boolean
   {

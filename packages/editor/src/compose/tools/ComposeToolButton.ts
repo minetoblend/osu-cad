@@ -1,5 +1,5 @@
 import type { ClickEvent, Drawable, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
-import { Anchor, Axes, Box, Container, EasingFunction, MouseButton, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Box, Container, dependencyLoader, EasingFunction, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import type { ComposeToolClass } from "../tools";
 import { ComposeToolbar } from "../tools";
 import { ActiveToolBindable } from "./ActiveToolBindable";
@@ -11,8 +11,6 @@ export class ComposeToolButton extends Container
   public constructor(public readonly tool: ComposeToolClass)
   {
     super();
-
-    this.size = new Vec2(ComposeToolbar.WIDTH);
 
     this.addInternal(this.#content = new Container({
       relativeSizeAxes: Axes.Both,
@@ -48,7 +46,13 @@ export class ComposeToolButton extends Container
   readonly #icon: Drawable;
 
   @resolved(ActiveToolBindable)
-  accessor #activeTool!: ActiveToolBindable
+  accessor #activeTool!: ActiveToolBindable;
+
+  @dependencyLoader()
+  #load()
+  {
+    this.size = new Vec2(ComposeToolbar.WIDTH);
+  }
 
   protected override loadComplete()
   {
