@@ -14,7 +14,9 @@
     "async": "^3.2.6",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
+    "express": "^4.21.2",
     "isomorphic-git": "^1.33.1",
+    "pixi.js": "^8.13.2",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

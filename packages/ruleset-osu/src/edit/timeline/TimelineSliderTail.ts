@@ -60,15 +60,16 @@ export class TimelineSliderTail extends CompositeDrawable
   {
     this.#history.discardUncommittedChanges();
 
-    const time = this.#timeline.timeAtScreenSpacePosition(e.screenSpaceMousePosition);
+    let time = this.#timeline.timeAtScreenSpacePosition(e.screenSpaceMousePosition);
 
     if (e.shiftPressed)
     {
-      const snapped = this.#beatmap.controlPointInfo.snap(time, this.beatDivisor.value);
+      if (!e.altPressed)
+        time = this.#beatmap.controlPointInfo.snap(time, this.beatDivisor.value);
 
       const slider = this.blueprint.hitObject;
 
-      const duration = snapped - slider.startTime;
+      const duration = time - slider.startTime;
 
       const velocity = slider.path.distance * slider.spanCount() / slider.baseVelocity / duration;
       if (Number.isFinite(velocity))

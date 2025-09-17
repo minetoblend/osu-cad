@@ -7,22 +7,19 @@
       "path": "../../packages/ruleset-osu"
     },
     {
-      "path": "../../multiplayer/server"
+      "path": "../../packages/editor"
+    },
+    {
+      "path": "../../packages/core"
     },
     {
       "path": "../../multiplayer/protocol"
     },
     {
+      "path": "../../multiplayer/server"
+    },
+    {
       "path": "../../multiplayer/core"
-    },
-    {
-      "path": "../../packages/framework"
-    },
-    {
-      "path": "../../packages/editor"
-    },
-    {
-      "path": "../../packages/core"
     },
     {
       "path": "./tsconfig.app.json"
