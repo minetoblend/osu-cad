@@ -1,12 +1,10 @@
 import { type HitObject } from "@osucad/core";
 import type { HotkeyKeyBindingEvent } from "@osucad/editor";
 import { ComposeTool, HitObjectComposer, HitObjectSelection, Hotkeys } from "@osucad/editor";
-import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Bindable, BoundsBuilder, DependencyContainer, dependencyLoader, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
-import type { SnapResult } from "../../../edit/SnapProvider";
+import type { ClickEvent } from "@osucad/framework";
+import { Bindable, BoundsBuilder, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
 import { type OsuHitObject, Slider, Spinner } from "../../../hitObjects";
 import { OsuEditorAction } from "../../OsuEditorAction";
-import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { OsuPlayfield } from "../../../ui";
 import { MoveOperator } from "../../operators/MoveOperator";
@@ -29,28 +27,10 @@ import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer
   presenceOverlay: SelectToolPresenceOverlay,
 })
 @provideSelf()
-export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
+export class SelectTool extends ComposeTool
 {
   @resolved(HitObjectSelection)
   public accessor selection!: HitObjectSelection<OsuHitObject>;
-
-
-  public snapProvider = new HitObjectSnapProvider();
-
-  #dependencies!: DependencyContainer;
-
-  protected override createChildDependencies(dependencies: ReadonlyDependencyContainer)
-  {
-    return this.#dependencies = new DependencyContainer(dependencies);
-  }
-
-  @dependencyLoader()
-  #load()
-  {
-    this.addRangeInternal([
-      this.snapProvider,
-    ]);
-  }
 
   readonly #hoveredSlider = new Bindable<Slider | undefined>(undefined);
 
@@ -113,13 +93,6 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     };
   }
 
-  public override dispose()
-  {
-    this.beatmap.hitObjects.removed.removeListener(this.#hitObjectRemoved, this);
-
-    super.dispose();
-  }
-
   public get hoveredBlueprints()
   {
     return this.inputManager.hoveredDrawables.filter(it => it instanceof HitObjectSelectionBlueprint) as HitObjectSelectionBlueprint<OsuHitObject>[];
@@ -139,51 +112,9 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
 
   protected override onClick(e: ClickEvent): boolean
   {
-    const blueprints = this.inputManager.hoveredDrawables.filter(it => it instanceof HitObjectSelectionBlueprint);
-
-    if (blueprints.length === 0)
-    {
+    if (this.hoveredBlueprints.length === 0)
       this.selection.clear();
-      return true;
-    }
 
-    return true;
-  }
-
-  public moveObjects(movement: Vec2, objects: OsuHitObject[], startPositions: Vec2[])
-  {
-    for (let i = 0; i < objects.length; i++)
-      objects[i].position = startPositions[i].add(movement);
-
-    const snapTargets = objects.flatMap((it, index) => it.getSnapTargets());
-
-    let closestDistance = Number.MAX_VALUE;
-    let closest: SnapResult | undefined;
-    for (const result of this.snapProvider.getSnapResults(snapTargets, { ignore: objects }))
-    {
-      const dist = result.distance;
-      if (dist < closestDistance)
-      {
-        closestDistance = dist;
-        closest = result;
-      }
-    }
-
-    if (closest && closest.distance < 5)
-    {
-      const { offset } = closest;
-
-      for (let i = 0; i < objects.length; i++)
-        objects[i].moveBy(offset.x, offset.y);
-    }
-
-    this.moveIntoBounds(objects);
-  }
-
-  public readonly isKeyBindingHandler = true;
-
-  public canHandleKeyBinding(binding: KeyBindingAction): boolean
-  {
     return true;
   }
 
@@ -267,8 +198,6 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   {
     if (this.selection.size > 0)
       void this.push(new MoveInteraction());
-
-    return true;
   }
 
   @Hotkeys.keyBinding(OsuEditorAction.Rotate, { label: "Rotate" })
@@ -276,8 +205,6 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   {
     if (this.selection.size > 0)
       this.toolContainer.push(new RotateInteraction());
-
-    return true;
   }
 
   @Hotkeys.keyBinding(OsuEditorAction.NudgePosition)
@@ -381,5 +308,12 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
       for (const h of hitObjects)
         h.moveBy(offset.x, offset.y);
     }
+  }
+
+  public override dispose()
+  {
+    this.beatmap.hitObjects.removed.removeListener(this.#hitObjectRemoved, this);
+
+    super.dispose();
   }
 }

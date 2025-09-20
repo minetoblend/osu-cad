@@ -1,4 +1,4 @@
-import type { EditorRuntimeConfig, HitObjectComposer, TimelineBlueprintContainer } from "@osucad/editor";
+import type { ComposeToolClass, EditorRuntimeConfig, HitObjectComposer, TimelineBlueprintContainer } from "@osucad/editor";
 import { EditorRuleset, keyBinding } from "@osucad/editor";
 import type { Component, KeyBinding } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
@@ -10,6 +10,10 @@ import { EditorStackingProcessor } from "./EditorStackingProcessor";
 import { OsuTimelineBlueprintContainer } from "./timeline/OsuTimelineBlueprintContainer";
 import { OsuEditorAction } from "./OsuEditorAction";
 import { SliderVelocityPoint } from "../beatmaps";
+import { SelectTool } from "./tools/select/SelectTool";
+import { HitCircleTool } from "./tools/circle/HitCircleTool";
+import { SliderTool } from "./tools/slider/SliderTool";
+import { OsuHitObjectComposer } from "./OsuHitObjectComposer";
 
 export class OsuEditorRuleset extends EditorRuleset
 {
@@ -27,9 +31,18 @@ export class OsuEditorRuleset extends EditorRuleset
     ],
   };
 
-  public override async createHitObjectComposer(): Promise<HitObjectComposer>
+  public override createHitObjectComposer(): HitObjectComposer
   {
-    return import("./OsuHitObjectComposer").then(m => new m.OsuHitObjectComposer());
+    return new OsuHitObjectComposer();
+  }
+
+  public override getHitObjectTools(): readonly ComposeToolClass[]
+  {
+    return [
+      SelectTool,
+      HitCircleTool,
+      SliderTool,
+    ];
   }
 
   public override createBackgroundProcessors(): Component[]
