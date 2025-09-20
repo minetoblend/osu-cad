@@ -1,14 +1,15 @@
 import type { HitObject } from "@osucad/core";
 import type { ScrollEvent } from "@osucad/framework";
-import { almostEquals, Axes, Container, DependencyContainer, dependencyLoader, keyBindingHandler, provide, type ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import { almostEquals, Axes, Container, DependencyContainer, dependencyLoader, keyBindingHandler, provide, provideSelf, type ReadonlyDependencyContainer, resolved } from "@osucad/framework";
 import { EditorAction } from "../EditorAction";
 import { EditorClock } from "../EditorClock";
 import { EditorRuleset } from "../EditorRuleset";
 import { EditorScreen } from "../EditorScreen";
 import { EditorBeatmap } from "../runtime";
 import { HitObjectSelection } from "./HitObjectSelection";
-import { ComposeTimeline } from "./timeline/ComposeTimeline";
+import { ComposeTimeline } from "./timeline";
 
+@provideSelf()
 export class ComposeScreen extends EditorScreen
 {
   public constructor()

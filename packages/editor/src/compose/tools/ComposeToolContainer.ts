@@ -1,8 +1,11 @@
 import type { ValueChangedEvent } from "@osucad/framework";
+import { Cached } from "@osucad/framework";
 import { Axes, CompositeDrawable, provideSelf, resolved } from "@osucad/framework";
 import { ActiveToolBindable } from "./ActiveToolBindable";
 import type { ComposeTool, ComposeToolClass } from "./ComposeTool";
 import type { ModalComposeTool } from "./ModalComposeTool";
+import { ComposeScreen } from "../ComposeScreen";
+import { HotkeyBar } from "../../hotkeys/HotkeyBar";
 
 @provideSelf()
 export class ComposeToolContainer extends CompositeDrawable
@@ -10,9 +13,14 @@ export class ComposeToolContainer extends CompositeDrawable
   @resolved(ActiveToolBindable)
   accessor #activeToolBindable!: ActiveToolBindable;
 
+  @resolved(() => ComposeScreen)
+  accessor #composeScreen!: ComposeScreen;
+
   #activeTool?: ComposeTool | undefined;
 
   #tools: ComposeTool[] = [];
+
+  readonly #statusBar = new Cached();
 
   public get activeTool()
   {
@@ -50,6 +58,17 @@ export class ComposeToolContainer extends CompositeDrawable
         this.#exited.splice(i--, 1);
       }
     }
+
+    if (!this.#statusBar.isValid)
+    {
+      this.#statusBar.validate();
+
+      this.#composeScreen.setStatusBarContent(
+          this.activeSubTool
+              ? new HotkeyBar(this.activeSubTool)
+              : null,
+      );
+    }
   }
 
   #exited: ComposeTool[] = [];
@@ -70,6 +89,7 @@ export class ComposeToolContainer extends CompositeDrawable
     this.#tools.push(tool);
 
     tool.doWhenLoaded(() => tool.onEntering(tool));
+    this.#statusBar.invalidate();
   }
 
   public pop()
@@ -90,6 +110,8 @@ export class ComposeToolContainer extends CompositeDrawable
       next.onResuming(tool);
       next.lifetimeEnd = Number.POSITIVE_INFINITY;
     }
+
+    this.#statusBar.invalidate();
 
     return true;
   }

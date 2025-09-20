@@ -12,6 +12,16 @@
         "parallel": true
       }
     },
+    "clean": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "find ./packages/*/dist -delete || true",
+          "find ./multiplayer/*/dist -delete || true"
+        ]
+      }
+    },
     "local-registry": {
       "executor": "@nx/js:verdaccio",
       "options": {

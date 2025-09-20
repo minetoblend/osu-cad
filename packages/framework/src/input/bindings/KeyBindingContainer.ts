@@ -20,14 +20,14 @@ const log = debug("KeyBindingContainer");
 
 export abstract class BaseKeyBindingContainer extends Container
 {
-  #keyBindings: IKeyBinding[] | null = null;
+  #keyBindings: readonly IKeyBinding[] | null = null;
 
-  public get keyBindings()
+  public get keyBindings(): readonly IKeyBinding[] | null
   {
     return this.#keyBindings;
   }
 
-  protected set keyBindings(value)
+  protected set keyBindings(value: readonly IKeyBinding[] | null)
   {
     this.#keyBindings = value;
   }
@@ -255,13 +255,13 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
     if (
       this.#simultaneousMode === SimultaneousBindingMode.None
-      && (this.#matchingMode === KeyCombinationMatchingMode.Exact
-        || this.#matchingMode === KeyCombinationMatchingMode.Modifiers)
+        && (this.#matchingMode === KeyCombinationMatchingMode.Exact
+            || this.#matchingMode === KeyCombinationMatchingMode.Modifiers)
     )
     {
       if (
         this.#pressedBindings.length > 0
-        && !this.#pressedBindings.some(m => m.keyCombination.isPressed(pressedCombination, this.#matchingMode))
+          && !this.#pressedBindings.some(m => m.keyCombination.isPressed(pressedCombination, this.#matchingMode))
       )
       {
         this.#releasePressedActions(state);
@@ -392,7 +392,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
       if (
         this.#pressedInputKeys.size === 0
-        || !binding.keyCombination.isPressed(pressedCombination, KeyCombinationMatchingMode.Any)
+          || !binding.keyCombination.isPressed(pressedCombination, KeyCombinationMatchingMode.Any)
       )
       {
         this.#pressedBindings.splice(i--, 1);
@@ -414,7 +414,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
   {
     if (
       this.#simultaneousMode === SimultaneousBindingMode.All
-      || (this.#pressedActions.includes(released) && this.#pressedBindings.every(b => b.getAction() !== released))
+        || (this.#pressedActions.includes(released) && this.#pressedBindings.every(b => b.getAction() !== released))
     )
     {
       const releaseEvent = new KeyBindingReleaseEvent<T>(state, released);

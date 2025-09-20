@@ -8,6 +8,7 @@ import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 import { OsuSkinComponents } from "../../skinning";
 import { OsuTimelineBlueprint } from "./OsuTimelineBlueprint";
 import { TimelineSliderTail } from "./TimelineSliderTail";
+import { TimelineSliderRepeat } from "./TimelineSliderRepeat";
 
 export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
 {
@@ -85,30 +86,21 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
   {
     let drawableIndex = 0;
 
-    for (const h of this.hitObject.nestedHitObjects)
+    for (let i = this.hitObject.nestedHitObjects.length - 1; i >= 0; i--)
     {
+      const h = this.hitObject.nestedHitObjects[i];
+
       if (!(h instanceof SliderRepeat))
         continue;
 
       let repeat = this.#repeats.children[drawableIndex++];
 
       if (!repeat)
-      {
-        this.#repeats.add(
-            repeat = new SkinnableDrawable(OsuSkinComponents.TimelineSliderRepeat).with({
-              relativeSizeAxes: Axes.Both,
-              relativePositionAxes: Axes.X,
-              anchor: Anchor.CenterLeft,
-              origin: Anchor.Center,
-              scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
-              depth: drawableIndex,
-            }),
-        );
-      }
+        this.#repeats.add(repeat = new TimelineSliderRepeat(this, { depth: -drawableIndex }));
 
       repeat.x = this.hitObject.duration === 0
-        ? 0
-        : (h.startTime - this.hitObject.startTime) / this.hitObject.duration;
+          ? 0
+          : (h.startTime - this.hitObject.startTime) / this.hitObject.duration;
     }
 
     while (drawableIndex < this.#repeats.children.length)

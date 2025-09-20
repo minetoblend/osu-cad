@@ -14,10 +14,11 @@ import { IAudience } from "./injectionTokens";
 import { EditorAudioTrack } from "./TrackLoader";
 import { EditorLayout } from "./EditorLayout";
 import { IBeatSyncProvider } from "./IBeatSyncProvider";
+import { ColorProvider, ColorScheme } from "./ColorProvider";
 
 export interface EditorOptions
 {
-  readonly document: Document
+  readonly document: Document;
 }
 
 @provideSelf(ISamplePlaybackDisabler)
@@ -30,6 +31,9 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     this.document = options.document;
     this.runtime = this.document.runtime as EditorRuntime;
   }
+
+  @provide()
+  readonly #colorProvider = new ColorProvider(ColorScheme.Indigo);
 
   public readonly samplePlaybackDisabled = new Bindable(false);
 
@@ -64,7 +68,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   }
 
   @resolved(ISkinSource)
-  accessor #skinSource!: ISkinSource
+  accessor #skinSource!: ISkinSource;
 
   protected editorClock!: EditorClock;
 

@@ -1,12 +1,24 @@
-import { Axes, Box, CompositeDrawable } from "@osucad/framework";
+import type { Drawable } from "@osucad/framework";
+import { Axes, Box, Container, dependencyLoader } from "@osucad/framework";
+import { ColorProvider } from "./ColorProvider";
 
-export class StatusBar extends CompositeDrawable
+export class StatusBar extends Container
 {
-  public static readonly HEIGHT = 24;
+  public static readonly HEIGHT = 26;
 
-  public constructor()
+  readonly #content = new Container({
+    relativeSizeAxes: Axes.Both,
+  });
+
+  protected override get content(): Container<Drawable>
   {
-    super();
+    return this.#content;
+  }
+
+  @dependencyLoader()
+  #load()
+  {
+    const colorProvider = this.dependencies.resolve(ColorProvider);
 
     this.relativeSizeAxes = Axes.X;
     this.height = StatusBar.HEIGHT;
@@ -14,8 +26,9 @@ export class StatusBar extends CompositeDrawable
     this.internalChildren = [
       new Box({
         relativeSizeAxes: Axes.Both,
-        color: 0x222228,
+        color: colorProvider.background4,
       }),
+      this.#content,
     ];
   }
 }
