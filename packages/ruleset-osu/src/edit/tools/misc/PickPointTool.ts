@@ -1,9 +1,9 @@
 import { Playfield } from "@osucad/core";
 import { EditorColors, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import { Anchor, Axes, Box, Container, dependencyLoader, type Drawable, type InputManager, resolved, type Vec2 } from "@osucad/framework";
-import { SnapManager } from "../SnapManager";
+import { SnapManager } from "../../SnapManager";
 
-export class PickPointInteraction extends ModalComposeTool<Vec2>
+export class PickPointTool extends ModalComposeTool<Vec2>
 {
   public result: Vec2 | undefined = undefined;
 

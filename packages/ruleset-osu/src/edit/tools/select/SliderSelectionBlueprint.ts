@@ -7,8 +7,8 @@ import { Color } from "pixi.js";
 import type { Slider } from "../../../hitObjects";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
 import { OsuSkinComponents } from "../../../skinning";
-import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
+import { MoveTool } from "../move/MoveTool";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
 {
@@ -148,7 +148,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     if (!this.selected)
       this.selectExclusive();
 
-    this.#toolContainer.push(new MoveInteraction({ completeOnMouseUp: true }));
+    this.#toolContainer.push(new MoveTool({ completeOnMouseUp: true }));
 
     return false;
   }
@@ -156,7 +156,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   public override isInSelectionRect(rectangle: Rectangle): boolean
   {
     return rectangle.contains(this.hitObject.stackedPosition)
-      || rectangle.contains(this.hitObject.stackedPathEndPosition);
+        || rectangle.contains(this.hitObject.stackedPathEndPosition);
   }
 
   #proxy: ProxyDrawable | null = null;

@@ -3,21 +3,21 @@ import type { ComposeTool, HotkeyKeyEvent } from "@osucad/editor";
 import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import type { InputManager, KeyDownEvent, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, InputKey, Key, MouseButton, PlatformAction, resolved, Vec2 } from "@osucad/framework";
-import type { OsuHitObject } from "../../hitObjects";
-import { MoveOperator } from "../operators/MoveOperator";
-import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
-import { PickSnapTargetsInteraction } from "./PickSnapTargetsInteraction";
-import { SnapTargetContainer } from "./SnapTargetContainer";
-import type { SnapResultQuery } from "../SnapManager";
-import { SnapManager } from "../SnapManager";
-import { SnapTargetVisualizer } from "../SnapTargetVisualizer";
+import type { OsuHitObject } from "../../../hitObjects";
+import { MoveOperator } from "../../operators/MoveOperator";
+import { OsuOperatorUtils } from "../../operators/OsuOperatorUtils";
+import { PickSnapTargetsTool } from "../misc/PickSnapTargetsTool";
+import { SnapTargetContainer } from "../misc/SnapTargetContainer";
+import type { SnapResultQuery } from "../../SnapManager";
+import { SnapManager } from "../../SnapManager";
+import { SnapTargetVisualizer } from "../../SnapTargetVisualizer";
 
 export interface MoveInteractionOptions
 {
   completeOnMouseUp?: boolean
 }
 
-export class MoveInteraction extends ModalComposeTool
+export class MoveTool extends ModalComposeTool
 {
   public completeOnMouseUp = false;
 
@@ -87,7 +87,7 @@ export class MoveInteraction extends ModalComposeTool
     this.history.discardUncommittedChanges();
     this.completeOnMouseUp = false;
 
-    this.push(new PickSnapTargetsInteraction()).then(result =>
+    this.push(new PickSnapTargetsTool()).then(result =>
     {
 
       this.#snapTargets = result ?? [];

@@ -14,11 +14,11 @@ import { ReverseOperator } from "../../operators/ReverseOperator";
 import type { SliderPathVisualizer } from "../slider/SliderPathVisualizer";
 import { SliderSelectionBlueprint } from "./SliderSelectionBlueprint";
 import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer";
-import { MoveInteraction } from "../../interactions/MoveInteraction";
-import { RotateInteraction } from "../../interactions/RotateInteraction";
 import { SelectToolPresenceOverlay } from "./SelectToolPresenceOverlay";
 import iconUrl from "./icon.png";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
+import { RotateTool } from "../rotate/RotateTool";
+import { MoveTool } from "../move/MoveTool";
 
 @ComposeTool.metadata({
   id: "select",
@@ -197,14 +197,14 @@ export class SelectTool extends ComposeTool
   #moveSelection()
   {
     if (this.selection.size > 0)
-      void this.push(new MoveInteraction());
+      void this.push(new MoveTool());
   }
 
   @Hotkeys.keyBinding(OsuEditorAction.Rotate, { label: "Rotate" })
   #rotate()
   {
     if (this.selection.size > 0)
-      this.toolContainer.push(new RotateInteraction());
+      this.toolContainer.push(new RotateTool());
   }
 
   @Hotkeys.keyBinding(OsuEditorAction.NudgePosition)

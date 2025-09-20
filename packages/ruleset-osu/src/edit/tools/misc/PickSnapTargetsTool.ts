@@ -2,13 +2,13 @@ import { Playfield } from "@osucad/core";
 import { EditorColors, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import type { Container, InputManager, MouseDownEvent, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, resolved, Vec2 } from "@osucad/framework";
-import type { OsuHitObject } from "../../hitObjects";
-import { SnapManager } from "../SnapManager";
+import type { OsuHitObject } from "../../../hitObjects";
+import { SnapManager } from "../../SnapManager";
 import { SnapTargetContainer } from "./SnapTargetContainer";
 import { SnapTargetMarker } from "./SnapTargetMarker";
 
 
-export class PickSnapTargetsInteraction extends ModalComposeTool<Vec2[]>
+export class PickSnapTargetsTool extends ModalComposeTool<Vec2[]>
 {
   public result: Vec2[] = [];
 
@@ -54,7 +54,7 @@ export class PickSnapTargetsInteraction extends ModalComposeTool<Vec2[]>
     const point = this.result.pop();
 
     if (point)
-      this.#snapTargetContainer.children[this.#snapTargetContainer.children.length -1]?.expire();
+      this.#snapTargetContainer.children[this.#snapTargetContainer.children.length - 1]?.expire();
   }
 
   protected override loadComplete(): void
@@ -154,7 +154,7 @@ class SnapTargetCursor extends CompositeDrawable
 
     this.#shape = value;
 
-    switch(value)
+    switch (value)
     {
     case "round":
       this.cornerRadius = 9;

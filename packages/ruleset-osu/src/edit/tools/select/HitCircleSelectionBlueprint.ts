@@ -6,10 +6,10 @@ import type { HitCircle } from "../../../hitObjects";
 import { OsuHitObject } from "../../../hitObjects";
 import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
 import { OsuSkinComponents } from "../../../skinning";
-import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { SelectTool } from "./SelectTool";
 import { ComposeToolContainer } from "@osucad/editor";
+import { MoveTool } from "../move/MoveTool";
 
 export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<HitCircle>
 {
@@ -76,7 +76,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     if (!this.selected)
       this.selectExclusive();
 
-    this.#toolContainer.push(new MoveInteraction({ completeOnMouseUp: true }));
+    this.#toolContainer.push(new MoveTool({ completeOnMouseUp: true }));
 
     return true;
   }

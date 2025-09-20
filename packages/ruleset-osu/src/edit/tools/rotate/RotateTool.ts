@@ -4,18 +4,18 @@ import { ComposerStatusBar, EditorHistory, HitObjectComposer, HitObjectSelection
 import type { Drawable, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, resolved, Vec2 } from "@osucad/framework";
 import { Color, Matrix } from "pixi.js";
-import { type OsuHitObject, Slider, Spinner } from "../../hitObjects";
-import { OsuPlayfield } from "../../ui";
-import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
-import { DashedLine } from "./DashedLine";
-import { PickPointInteraction } from "./PickPointInteraction";
+import { type OsuHitObject, Slider, Spinner } from "../../../hitObjects";
+import { OsuPlayfield } from "../../../ui";
+import { OsuOperatorUtils } from "../../operators/OsuOperatorUtils";
+import { DashedLine } from "../misc/DashedLine";
+import { PickPointTool } from "../misc/PickPointTool";
 
 export type TransformOrigin =
-  | { type: "custom", value: Vec2 }
-  | { type: "playfield_center" }
-  | { type: "selection_center" };
+    | { type: "custom", value: Vec2 }
+    | { type: "playfield_center" }
+    | { type: "selection_center" };
 
-export class RotateInteraction extends ModalComposeTool
+export class RotateTool extends ModalComposeTool
 {
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>;
@@ -64,7 +64,7 @@ export class RotateInteraction extends ModalComposeTool
   @Hotkeys.toggle.key("Shift", { label: "Precision mode" })
   private readonly precise = new BindableBoolean(false);
 
-  @Hotkeys.toggle.key("Control", { label:  "Snap" })
+  @Hotkeys.toggle.key("Control", { label: "Snap" })
   @Hotkeys.toggle.keyDown("Shift+Tab", { label: "Snap Invert" })
   private readonly snapped = new BindableBoolean(false);
 
@@ -75,7 +75,7 @@ export class RotateInteraction extends ModalComposeTool
   {
     this.#history.discardUncommittedChanges();
 
-    this.push(new PickPointInteraction()).then(result =>
+    this.push(new PickPointTool()).then(result =>
     {
       if (result)
         this.transformOrigin.value = { type: "custom", value: result };
@@ -116,7 +116,7 @@ export class RotateInteraction extends ModalComposeTool
   {
     const origin = this.transformOrigin.value;
 
-    switch(origin.type)
+    switch (origin.type)
     {
     case "custom":
       return origin.value;
@@ -265,7 +265,7 @@ export class RotateInteraction extends ModalComposeTool
     this.complete();
   }
 
-  @Hotkeys.key("MouseRightButton",{ label: "Cancel", priority: Number.MAX_VALUE })
+  @Hotkeys.key("MouseRightButton", { label: "Cancel", priority: Number.MAX_VALUE })
   @Hotkeys.key("Escape")
   #cancel()
   {
