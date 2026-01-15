@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@vue/reactivity": "^3.5.13",
-    "diff": "^7.0.0",
+    "diff": "^8.0.3",
     "pixi-filters": "^6.1.2",
     "pixi.js": "^8.9.2",
     "unzipit": "^1.4.3"
