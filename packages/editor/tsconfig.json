@@ -4,24 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../../multiplayer/protocol"
-    },
-    {
-      "path": "../../multiplayer/core"
-    },
-    {
-      "path": "../../multiplayer/client"
-    },
-    {
-      "path": "../framework"
-    },
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../visual-tests"
-    },
-    {
       "path": "./tsconfig.lib.json"
     }
   ]

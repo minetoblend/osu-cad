@@ -2,8 +2,9 @@ import type { TsgoExecutorSchema } from "./schema";
 import { viteBuildExecutor } from "@nx/vite/executors";
 import type { AsyncIteratorExecutor } from "nx/src/config/misc-interfaces";
 import tsgoExecutor from "./tsgo";
+import type { ExecutorContext } from "@nx/devkit";
 
-const executor: AsyncIteratorExecutor<TsgoExecutorSchema> = async function*(options, context)
+const executor: AsyncIteratorExecutor<TsgoExecutorSchema> = async function*(options, context: ExecutorContext)
 {
   const tsgo = tsgoExecutor(options, context);
 

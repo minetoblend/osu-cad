@@ -4,24 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../../packages/ruleset-osu"
-    },
-    {
-      "path": "../../multiplayer/core"
-    },
-    {
-      "path": "../../multiplayer/client"
-    },
-    {
-      "path": "../../packages/framework"
-    },
-    {
-      "path": "../../packages/editor"
-    },
-    {
-      "path": "../../packages/core"
-    },
-    {
       "path": "./tsconfig.app.json"
     }
   ]

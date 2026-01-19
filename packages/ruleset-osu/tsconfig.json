@@ -4,21 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../../multiplayer/core"
-    },
-    {
-      "path": "../editor"
-    },
-    {
-      "path": "../framework"
-    },
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../visual-tests"
-    },
-    {
       "path": "./tsconfig.lib.json"
     },
     {

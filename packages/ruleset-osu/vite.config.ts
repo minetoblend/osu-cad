@@ -32,7 +32,7 @@ export default defineConfig(() => ({
       formats: ["es" as const],
     },
     minify: false,
-    target: "modules",
+    target: "esnext",
     sourcemap: true,
     rollupOptions: {
       output: {

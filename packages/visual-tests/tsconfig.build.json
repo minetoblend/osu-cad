@@ -10,6 +10,7 @@
   },
   "include": [
     "vite.config.ts",
+    "plugin.ts",
     "package.json"
   ],
   "references": [
