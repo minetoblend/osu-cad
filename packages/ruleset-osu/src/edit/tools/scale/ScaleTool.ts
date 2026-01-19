@@ -1,12 +1,14 @@
 import {
-  BindableBeatDivisor, ComposerStatusBar, type ComposeTool,
+  BindableBeatDivisor,
+  ComposerStatusBar,
+  type ComposeTool,
   EditorBeatmap,
   EditorHistory,
   HitObjectSelection,
   Hotkeys,
   ModalComposeTool,
 } from "@osucad/editor";
-import { Bindable, clamp, type MouseMoveEvent, Quad, resolved, Vec2 } from "@osucad/framework";
+import { Bindable, clamp, type MouseMoveEvent, resolved, Vec2 } from "@osucad/framework";
 import { OsuOperatorUtils } from "../../operators/OsuOperatorUtils";
 import { OsuPlayfield } from "../../../ui";
 import type { OsuHitObject } from "../../../hitObjects";
