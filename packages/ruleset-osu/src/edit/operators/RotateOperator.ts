@@ -12,7 +12,7 @@ interface RotateOptions
   angleDegrees?: number;
   origin?: TransformOrigin;
   clampToBounds?: boolean;
-};
+}
 
 export class RotateOperator extends TransformOperator
 {

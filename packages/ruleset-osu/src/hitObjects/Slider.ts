@@ -46,6 +46,11 @@ export class Slider extends OsuHitObject
     safeAssign(this, { repeatCount, nodeHitSounds, expectedDistance, controlPoints });
 
     this.positionBindable.bindValueChanged(this.#updateNestedPositions, this);
+
+    this.path.version.bindValueChanged(() =>
+    {
+      this.invalidated.emit(this, "applyDefaults");
+    });
   }
 
   #updateNestedPositions()
@@ -149,14 +154,6 @@ export class Slider extends OsuHitObject
     const scoringDistance = this.velocity * timingPoint.beatLength;
 
     this.#tickDistance = scoringDistance / difficulty.sliderTickRate;
-  }
-
-  private bindPathVersion(path: SliderPath)
-  {
-    path.version.bindValueChanged(() =>
-    {
-      this.invalidated.emit(this, "applyDefaults");
-    });
   }
 
   public readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
