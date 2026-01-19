@@ -56,8 +56,6 @@ export class ScaleTool extends ModalComposeTool
   {
     super.loadComplete();
 
-    // this.transformOrigin.bindValueChanged(this.#updateState, this);
-    // this.snapped.bindValueChanged(this.#updateState, this);
     this.stringValue.bindValueChanged(this.#updateState, this);
 
     this.invalidateState();
