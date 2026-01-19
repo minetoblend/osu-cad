@@ -23,20 +23,30 @@ const tsgoExecutor: PromiseExecutor<TsgoExecutorSchema> = async (_options, conte
   const options = normalizeOptions(_options, context.root, sourceRoot!, root);
 
 
-  const command = [...generateCommand(options)].join(" ");
+  try
+  {
+    const command = [...generateCommand(options)].join(" ");
 
-  console.log(command);
+    console.log(command);
 
-  const { stdout, stderr } = await exec(command, {
-    cwd: context.root,
-  });
+    const { stdout, stderr } = await exec(command, {
+      cwd: context.root,
+    });
 
-  console.log(stdout);
-  console.error(stderr);
+    console.log(stdout);
+    console.error(stderr);
 
-  const success = !stderr;
+    return { success: true };
+  }
+  catch (e: any)
+  {
+    if ("stdout" in e)
+      console.log(e.stdout);
+    if ("stderr" in e)
+      console.error(e.stderr);
 
-  return { success };
+    return { success: false, error: e?.message };
+  }
 };
 
 
