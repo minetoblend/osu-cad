@@ -153,7 +153,7 @@ export class ScaleTool extends ModalComposeTool
         scale = value;
     }
 
-    scale = clamp(scale, 0.05, this.getMaxScale(origin));
+    scale = clamp(Math.abs(scale), 0.05, this.getMaxScale(origin)) * Math.sign(scale);
 
     console.log(scale);
 
