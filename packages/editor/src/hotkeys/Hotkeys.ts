@@ -164,8 +164,17 @@ export namespace Hotkeys
     }
   }
 
-  export function inputNumberString()
+  export interface InputNumberOptions
   {
+    allowNegative?: boolean
+  }
+
+  export function inputNumberString(options: InputNumberOptions = {})
+  {
+    const {
+      allowNegative = false,
+    } = options;
+
     return (
       target: unknown,
       context: ClassFieldDecoratorContext<Drawable, Bindable<string>>,
@@ -190,7 +199,7 @@ export namespace Hotkeys
           if (key === InputKey.Period)
             return true;
 
-          if (key === InputKey.Minus)
+          if (key === InputKey.Minus && allowNegative)
             return true;
 
           if (key === InputKey.BackSpace)
@@ -214,7 +223,7 @@ export namespace Hotkeys
             return true;
           }
 
-          if (key === InputKey.Minus)
+          if (key === InputKey.Minus && allowNegative)
           {
             if (bindable.value.startsWith("-"))
               bindable.value = bindable.value.slice(1);
