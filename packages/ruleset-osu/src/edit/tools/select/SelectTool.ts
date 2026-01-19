@@ -19,6 +19,7 @@ import iconUrl from "./icon.png";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 import { RotateTool } from "../rotate/RotateTool";
 import { MoveTool } from "../move/MoveTool";
+import { ScaleTool } from "../scale/ScaleTool";
 
 @ComposeTool.metadata({
   id: "select",
@@ -205,6 +206,13 @@ export class SelectTool extends ComposeTool
   {
     if (this.selection.size > 0)
       this.toolContainer.push(new RotateTool());
+  }
+
+  @Hotkeys.keyBinding(OsuEditorAction.Scale, { label: "Scale" })
+  #scale()
+  {
+    if (this.selection.size > 0)
+      this.toolContainer.push(new ScaleTool());
   }
 
   @Hotkeys.keyBinding(OsuEditorAction.NudgePosition)

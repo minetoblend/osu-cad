@@ -1,6 +1,6 @@
 import { Playfield } from "@osucad/core";
 import type { ComposeTool } from "@osucad/editor";
-import { ComposerStatusBar, EditorHistory, HitObjectComposer, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
+import { ComposerStatusBar, EditorHistory, HitObjectSelection, Hotkeys, ModalComposeTool } from "@osucad/editor";
 import type { Drawable, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, resolved, Vec2 } from "@osucad/framework";
 import { Color, Matrix } from "pixi.js";
@@ -25,9 +25,6 @@ export class RotateTool extends ModalComposeTool
 
   @resolved(Playfield)
   accessor #playfield!: Playfield
-
-  @resolved(HitObjectComposer)
-  accessor #composer!: HitObjectComposer
 
   @Hotkeys.inputNumberString()
   private readonly stringValue = new Bindable<string>("");

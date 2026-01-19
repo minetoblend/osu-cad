@@ -75,6 +75,7 @@ export class OsuEditorRuleset extends EditorRuleset
       keyBinding("K", OsuEditorAction.NudgeForward),
       keyBinding("G", OsuEditorAction.MoveSelection),
       keyBinding("R", OsuEditorAction.Rotate),
+      keyBinding("S", OsuEditorAction.Scale),
     ];
   }
 }
