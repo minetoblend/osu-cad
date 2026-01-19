@@ -30,6 +30,11 @@ import { ScaleTool } from "../scale/ScaleTool";
 @provideSelf()
 export class SelectTool extends ComposeTool
 {
+  public override get keepVisible(): boolean
+  {
+    return true;
+  }
+
   @resolved(HitObjectSelection)
   public accessor selection!: HitObjectSelection<OsuHitObject>;
 
@@ -72,7 +77,6 @@ export class SelectTool extends ComposeTool
       if (!slider)
         slider = hoveredSliders[0]?.hitObject;
     }
-
 
     this.#hoveredSlider.value = slider;
   }

@@ -82,8 +82,13 @@ export class ComposeToolContainer extends CompositeDrawable
   {
     const parent = this.activeSubTool;
 
-    parent?.onSuspending(tool);
-    parent?.expire();
+    if (parent)
+    {
+      parent.onSuspending(tool);
+
+      if (!parent.keepVisible)
+        parent.expire();
+    }
 
     this.addInternal(tool);
     this.#tools.push(tool);

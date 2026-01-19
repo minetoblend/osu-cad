@@ -52,6 +52,16 @@ export abstract class ComposeTool extends HotkeyContainer
     return false;
   }
 
+  public override get propagateNonPositionalInputSubTree(): boolean
+  {
+    return super.propagateNonPositionalInputSubTree && this.isCurrent;
+  }
+
+  public override get propagatePositionalInputSubTree(): boolean
+  {
+    return super.propagatePositionalInputSubTree && this.isCurrent;
+  }
+
   protected get screenSpaceMousePosition()
   {
     return this.inputManager.currentState.mouse.position;
@@ -101,6 +111,16 @@ export abstract class ComposeTool extends HotkeyContainer
 
   public onResuming(previous: ComposeTool)
   {
+  }
+
+  public get isCurrent()
+  {
+    return this.toolContainer?.activeSubTool === this;
+  }
+
+  public get keepVisible()
+  {
+    return false;
   }
 
   protected push<T>(modal: ModalComposeTool<T>): Promise<T | undefined>
