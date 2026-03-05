@@ -31,7 +31,7 @@
     "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
     "nx": "20.8.1",
-    "storybook": "^8.6.11",
+    "storybook": "^8.6.17",
     "swc-loader": "0.1.15",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
