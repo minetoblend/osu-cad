@@ -32,7 +32,7 @@
   "dependencies": {
     "@osucad/framework": "1.1.2",
     "pixi.js": "^8.9.2",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/uuid": "^10.0.0"
