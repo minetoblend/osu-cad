@@ -254,8 +254,8 @@ importers:
         specifier: ^8.18.1
         version: 8.18.1
       unzipit:
-        specifier: ^1.4.3
-        version: 1.4.3
+        specifier: ^2.0.1
+        version: 2.0.1
     devDependencies:
       '@types/diff':
         specifier: ^7.0.2
@@ -10380,11 +10380,9 @@ packages:
       '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
     dev: true
 
-  /unzipit@1.4.3:
-    resolution: {integrity: sha512-gsq2PdJIWWGhx5kcdWStvNWit9FVdTewm4SEG7gFskWs+XCVaULt9+BwuoBtJiRE8eo3L1IPAOrbByNLtLtIlg==}
-    engines: {node: '>=12'}
-    dependencies:
-      uzip-module: 1.0.3
+  /unzipit@2.0.1:
+    resolution: {integrity: sha512-o+2dK2LsJCNL99OafsvPGM/z7NpkxOvV+UFE69h7cw+h31tArfX5yP/bPhaBempz6H5swGRdN8m3BSFtz/83Gw==}
+    engines: {node: '>=18'}
     dev: false
 
   /update-browserslist-db@1.2.3(browserslist@4.28.2):
@@ -10439,10 +10437,6 @@ packages:
     deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
     dev: true
-
-  /uzip-module@1.0.3:
-    resolution: {integrity: sha512-AMqwWZaknLM77G+VPYNZLEruMGWGzyigPK3/Whg99B3S6vGHuqsyl5ZrOv1UUF3paGK1U6PM0cnayioaryg/fA==}
-    dev: false
 
   /v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
