@@ -27,7 +27,7 @@
     "@osucad/framework": "1.1.2",
     "@vueuse/core": "^13.1.0",
     "async": "^3.2.6",
-    "mpg123-decoder": "^1.0.1",
+    "mpg123-decoder": "^1.0.3",
     "pixi.js": "^8.9.2"
   },
   "devDependencies": {
