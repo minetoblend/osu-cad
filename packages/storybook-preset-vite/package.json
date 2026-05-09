@@ -26,7 +26,7 @@
     }
   },
   "dependencies": {
-    "@storybook/builder-vite": "^8.0.0",
+    "@storybook/builder-vite": "^10.3.6",
     "@storybook/types": "^8.0.0",
     "@types/node": "^18.0.0",
     "react": "19.2.6",
