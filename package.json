@@ -22,7 +22,7 @@
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",
     "@swc/helpers": "0.5.21",
-    "@types/node": "18.16.9",
+    "@types/node": "25.6.2",
     "@vitest/coverage-v8": "4.1.5",
     "@vitest/ui": "4.1.5",
     "eslint": "^9.39.4",
