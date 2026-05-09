@@ -29,7 +29,7 @@
     "diff": "^8.0.3",
     "pixi-filters": "^6.1.5",
     "pixi.js": "^8.18.1",
-    "unzipit": "^1.4.3"
+    "unzipit": "^2.0.1"
   },
   "devDependencies": {
     "@types/diff": "^7.0.2",
