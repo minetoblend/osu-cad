@@ -16,7 +16,7 @@
     "@osucad/storybook-preset-vite": "workspace:^",
     "@osucad/storybook-renderer": "workspace:^",
     "@osucad/storybook-vite": "workspace:^",
-    "@storybook/addon-essentials": "^8.6.11",
+    "@storybook/addon-essentials": "^8.6.14",
     "@storybook/core-server": "^8.6.11",
     "@stylistic/eslint-plugin-ts": "^4.2.0",
     "@swc-node/register": "~1.11.1",
