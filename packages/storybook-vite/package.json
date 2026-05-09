@@ -34,12 +34,9 @@
   "dependencies": {
     "@osucad/storybook-preset-vite": "workspace:^",
     "@osucad/storybook-renderer": "workspace:^",
-    "@storybook/builder-vite": "^8.0.0",
-    "@storybook/core-common": "^8.0.0",
-    "@storybook/types": "^8.0.0",
+    "@storybook/builder-vite": "^10.0.0",
     "@types/node": "^18.0.0",
     "@types/offscreencanvas": "^2019.7.0",
-    "global": "^4.4.0",
     "react": "19.2.6",
     "react-dom": "16.14.0",
     "tsup": "^8.5.1"
@@ -47,6 +44,7 @@
   "devDependencies": {
   },
   "peerDependencies": {
+    "storybook": "^10.0.0"
   },
   "engines": {
     "node": ">=18"

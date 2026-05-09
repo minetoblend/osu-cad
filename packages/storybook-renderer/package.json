@@ -31,11 +31,7 @@
       "import": "./package.json"
     }
   },
-  "dependencies": {
-    "@storybook/csf": "~0.1.2",
-    "@storybook/types": "^8.0.0",
-    "global": "^4.4.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/deep-equal": "^1.0.4",
     "@types/webpack-env": "^1.18.4",
@@ -44,7 +40,8 @@
     "typescript": "~5.3.3"
   },
   "peerDependencies": {
-    "@osucad/framework": "workspace:^"
+    "@osucad/framework": "workspace:^",
+    "storybook": "^10.0.0"
   },
   "bundler": {
     "entries": [

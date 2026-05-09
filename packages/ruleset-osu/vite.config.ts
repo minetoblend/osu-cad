@@ -34,7 +34,7 @@ export default defineConfig(() => ({
       formats: ["es" as const],
     },
     minify: false,
-    target: "modules",
+    target: "esnext",
     sourcemap: true,
     rollupOptions: {
       // External packages that should not be bundled into your library.

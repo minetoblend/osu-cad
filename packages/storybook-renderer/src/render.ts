@@ -1,6 +1,6 @@
 import { Drawable, WebGameHost } from "@osucad/framework";
 import { StorybookGame } from "./StorybookGame";
-import type { ArgsStoryFn, RenderContext, RenderToCanvas } from "@storybook/types";
+import type { ArgsStoryFn, RenderContext, RenderToCanvas } from "storybook/internal/types";
 import type { OsucadRenderer, StoryDrawable } from "./types/types";
 
 let game: StorybookGame | undefined;

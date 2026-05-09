@@ -45,3 +45,6 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
 storybook-static
+.claude/worktrees
+.nx/polygraph
+.nx/self-healing

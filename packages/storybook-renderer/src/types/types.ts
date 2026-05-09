@@ -1,8 +1,8 @@
-import type { StoryContext as DefaultStoryContext } from "@storybook/csf";
+import type { StoryContext as DefaultStoryContext } from "storybook/internal/csf";
 import type { Drawable } from "@osucad/framework";
-import type { WebRenderer } from "@storybook/types";
+import type { WebRenderer } from "storybook/internal/types";
 
-export type { RenderContext, WebRenderer } from "@storybook/types";
+export type { RenderContext, WebRenderer } from "storybook/internal/types";
 
 export type ApplicationResizeFunctionReturnType = {
   rendererWidth: number;

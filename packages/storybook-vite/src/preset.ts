@@ -1,5 +1,5 @@
 import path from "path";
-import type { PresetProperty, PresetPropertyFn } from "@storybook/types";
+import type { PresetProperty, PresetPropertyFn } from "storybook/internal/types";
 import type { StorybookConfig } from "./types";
 
 export const addons: PresetProperty<"addons", StorybookConfig> = [

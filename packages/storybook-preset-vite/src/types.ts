@@ -2,4 +2,4 @@ export type {
   StorybookConfigVite,
   BuilderOptions,
 } from "@storybook/builder-vite";
-export type { StorybookConfig, TypescriptOptions } from "@storybook/types";
+export type { StorybookConfig, TypescriptOptions } from "storybook/internal/types";

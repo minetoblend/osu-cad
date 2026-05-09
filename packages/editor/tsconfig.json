@@ -4,12 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../framework"
-    },
-    {
-      "path": "../core"
-    },
-    {
       "path": "./tsconfig.lib.json"
     }
   ]
