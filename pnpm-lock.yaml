@@ -245,8 +245,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34
       diff:
-        specifier: ^8.0.3
-        version: 8.0.3
+        specifier: ^9.0.0
+        version: 9.0.0
       pixi-filters:
         specifier: ^6.1.5
         version: 6.1.5(pixi.js@8.18.1)
@@ -5967,8 +5967,8 @@ packages:
     engines: {node: '>=0.3.1'}
     dev: true
 
-  /diff@8.0.3:
-    resolution: {integrity: sha512-qejHi7bcSD4hQAZE0tNAawRK1ZtafHDmMTMkrrIGgSLl7hTnQHmKCeB45xAcbfTqK2zowkM3j3bHt/4b/ARbYQ==}
+  /diff@9.0.0:
+    resolution: {integrity: sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==}
     engines: {node: '>=0.3.1'}
     dev: false
 
