@@ -1,6 +1,32 @@
-import type { BitmapText, Container, InstructionSet, PoolItem, Renderable, Renderer, RenderPipe } from "pixi.js";
+import type {
+  BitmapText,
+  GPUData,
+  InstructionSet,
+  Renderable,
+  Renderer,
+  RenderPipe } from "pixi.js";
+import { CanvasTextMetrics,
+  PoolItem,
+} from "pixi.js";
+import {
+  Container, GCManagedHash,
+} from "pixi.js";
 import { BigPool, BitmapFontManager, Cache, ExtensionType, getBitmapTextLayout, getMaxTexturesPerBatch, Graphics, SdfShader } from "pixi.js";
 import { TextShader } from "./TextShader";
+
+
+export class BitmapTextGraphics extends Graphics implements GPUData
+{
+  public override destroy()
+  {
+    if (this.context.customShader)
+    {
+      this.context.customShader.destroy();
+    }
+
+    super.destroy();
+  }
+}
 
 export class SpriteTextPipe implements RenderPipe<BitmapText>
 {
@@ -14,36 +40,20 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
     name: "spriteText",
   } as const;
 
-  private _renderer: Renderer;
-  private _gpuBitmapText: Record<number, Graphics> = {};
-  private readonly _destroyRenderableBound = this.destroyRenderable.bind(this) as (renderable: Container) => void;
-  private readonly _textShader: TextShader;
+  protected _renderer: Renderer;
+  private readonly _managedBitmapTexts: GCManagedHash<BitmapText>;
 
   constructor(renderer: Renderer)
   {
     this._renderer = renderer;
-    this._renderer.renderableGC.addManagedHash(this, "_gpuBitmapText");
-
-    const maxTextures = getMaxTexturesPerBatch();
-    this._textShader = new TextShader(maxTextures);
+    this._managedBitmapTexts = new GCManagedHash({ renderer, type: "renderable", priority: -2, name: "bitmapText" });
   }
 
   public validateRenderable(bitmapText: BitmapText): boolean
   {
     const graphicsRenderable = this._getGpuBitmapText(bitmapText);
 
-    if (bitmapText._didTextUpdate)
-    {
-      bitmapText._didTextUpdate = false;
-
-      this._updateContext(bitmapText, graphicsRenderable);
-    }
-
     return this._renderer.renderPipes.graphics.validateRenderable(graphicsRenderable);
-
-    // TODO - need to shift all the verts in the graphicsData to the new anchor
-
-    // update the anchor...
   }
 
   public addRenderable(bitmapText: BitmapText, instructionSet: InstructionSet)
@@ -62,34 +72,11 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
 
     this._renderer.renderPipes.graphics.addRenderable(graphicsRenderable, instructionSet);
 
-    if (graphicsRenderable.context.customShader instanceof SdfShader)
+    if (graphicsRenderable.context.customShader)
     {
       this._updateDistanceField(bitmapText);
     }
   }
-
-  public destroyRenderable(bitmapText: BitmapText)
-  {
-    bitmapText.off("destroyed", this._destroyRenderableBound);
-
-    this._destroyRenderableByUid(bitmapText.uid);
-  }
-
-  private _destroyRenderableByUid(renderableUid: number)
-  {
-    const context = this._gpuBitmapText[renderableUid].context;
-
-    if (context.customShader instanceof SdfShader)
-    {
-      BigPool.return(context.customShader as PoolItem);
-
-      context.customShader = null!;
-    }
-
-    BigPool.return(this._gpuBitmapText[renderableUid] as PoolItem);
-    this._gpuBitmapText[renderableUid] = null!;
-  }
-
   public updateRenderable(bitmapText: BitmapText)
   {
     const graphicsRenderable = this._getGpuBitmapText(bitmapText);
@@ -99,10 +86,15 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
 
     this._renderer.renderPipes.graphics.updateRenderable(graphicsRenderable);
 
-    if (graphicsRenderable.context.customShader instanceof SdfShader)
+    if (graphicsRenderable.context.customShader)
     {
       this._updateDistanceField(bitmapText);
     }
+  }
+
+  protected getSdfShader(): SdfShader
+  {
+    return new SdfShader(this._renderer.limits.maxTextures);
   }
 
   private _updateContext(bitmapText: BitmapText, proxyGraphics: Graphics)
@@ -113,27 +105,28 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
 
     context.clear();
 
-    if (bitmapFont.distanceField!.type !== "none")
+    if (bitmapFont.distanceField?.type !== "none")
     {
-      if (!context.customShader)
+      // Only use custom shader for WebGL/WebGPU renderers
+      // Canvas renderer cannot properly handle MSDF distance field math
+      const sdfShader = this.getSdfShader();
+
+      if (sdfShader)
       {
-        context.customShader = BigPool.get(SdfShader);
+        if (!context.customShader)
+        {
+          context.customShader = sdfShader;
+        }
       }
     }
-    else
-    {
-      context.customShader = this._textShader;
-    }
 
-    const chars = Array.from(bitmapText.text);
+    const chars = CanvasTextMetrics.graphemeSegmenter(bitmapText.text);
     const style = bitmapText._style;
 
     let currentY = bitmapFont.baseLineOffset;
 
     // measure our text...
     const bitmapTextLayout = getBitmapTextLayout(chars, style, bitmapFont, true);
-
-    let index = 0;
 
     const padding = style.padding;
     const scale = bitmapTextLayout.scale;
@@ -153,48 +146,70 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
 
     const tint = bitmapFont.applyFillAsTint ? style._fill.color : 0xFFFFFF;
 
+    let fontSize = bitmapFont.fontMetrics.fontSize;
+    let lineHeight = bitmapFont.lineHeight;
+
+    if (style.lineHeight)
+    {
+      fontSize = style.fontSize / scale;
+      lineHeight = style.lineHeight / scale;
+    }
+
+    let linePositionYShift = (lineHeight - fontSize) / 2;
+
+    // if `currentY` is no longer starts from `baseLineOffset`
+    // the `baseLineOffset` below may also need to be removed
+    if (linePositionYShift - bitmapFont.baseLineOffset < 0)
+    {
+      linePositionYShift = 0;
+    }
+
     for (let i = 0; i < bitmapTextLayout.lines.length; i++)
     {
       const line = bitmapTextLayout.lines[i];
 
       for (let j = 0; j < line.charPositions.length; j++)
       {
-        const char = chars[index++];
-
+        const char = line.chars[j];
         const charData = bitmapFont.chars[char];
 
         if (charData?.texture)
         {
+          const texture = charData.texture;
+
           context.texture(
-              charData.texture,
-              tint || "black",
+              texture,
+              tint,
               Math.round(line.charPositions[j] + charData.xOffset),
-              Math.round(currentY + charData.yOffset),
+              Math.round(currentY + charData.yOffset + linePositionYShift),
+              texture.orig.width,
+              texture.orig.height,
           );
         }
       }
 
-      currentY += bitmapFont.lineHeight;
+      currentY += lineHeight;
     }
+
   }
 
   private _getGpuBitmapText(bitmapText: BitmapText)
   {
-    return this._gpuBitmapText[bitmapText.uid] || this.initGpuText(bitmapText);
+    return bitmapText._gpuData[this._renderer.uid] || this.initGpuText(bitmapText);
   }
 
   public initGpuText(bitmapText: BitmapText)
   {
     // TODO we could keep a bunch of contexts around and reuse one that has the same style!
-    const proxyRenderable = BigPool.get(Graphics);
+    const proxyRenderable = new BitmapTextGraphics();
 
-    this._gpuBitmapText[bitmapText.uid] = proxyRenderable;
+    bitmapText._gpuData[this._renderer.uid] = proxyRenderable;
 
     this._updateContext(bitmapText, proxyRenderable);
 
-    bitmapText.on("destroyed", this._destroyRenderableBound);
+    this._managedBitmapTexts.add(bitmapText);
 
-    return this._gpuBitmapText[bitmapText.uid];
+    return proxyRenderable;
   }
 
   private _updateDistanceField(bitmapText: BitmapText)
@@ -220,14 +235,9 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
 
   public destroy()
   {
-    for (const uid in this._gpuBitmapText)
-    {
-      this._destroyRenderableByUid(uid as unknown as number);
-    }
-
-    this._gpuBitmapText = null!;
-
+    this._managedBitmapTexts.destroy();
     this._renderer = null!;
+    (this._managedBitmapTexts as unknown) = null!;
   }
 }
 

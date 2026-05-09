@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/deep-equal": "^1.0.4",
     "@types/webpack-env": "^1.18.4",
-    "pixi.js": "^8.0.0",
+    "pixi.js": "^8.18.1",
     "tsup": "^8.5.1",
     "typescript": "~5.3.3"
   },

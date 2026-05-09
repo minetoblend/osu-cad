@@ -31,7 +31,7 @@
   ],
   "dependencies": {
     "@osucad/framework": "1.1.2",
-    "pixi.js": "^8.9.2",
+    "pixi.js": "^8.18.1",
     "uuid": "^14.0.0"
   },
   "devDependencies": {

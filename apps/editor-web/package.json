@@ -9,7 +9,7 @@
     "@osucad/ruleset-osu": "workspace:^",
     "@osucad/editor": "workspace:^",
     "@osucad/multiplayer": "workspace:^",
-    "pixi.js": "^8.9.2"
+    "pixi.js": "^8.18.1"
   },
   "devDependencies": {
     "vite-plugin-conditional-compiler": "^0.3.1"

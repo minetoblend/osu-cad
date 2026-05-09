@@ -135,8 +135,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
     devDependencies:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
@@ -160,8 +160,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
     devDependencies:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
@@ -179,8 +179,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
     devDependencies:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
@@ -220,8 +220,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
     devDependencies:
       '@types/async':
         specifier: ^3.2.24
@@ -236,8 +236,8 @@ importers:
         specifier: 1.1.2
         version: link:../framework
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
 
   packages/framework:
     dependencies:
@@ -248,11 +248,11 @@ importers:
         specifier: ^8.0.3
         version: 8.0.3
       pixi-filters:
-        specifier: ^6.1.2
-        version: 6.1.2(pixi.js@8.9.2)
+        specifier: ^6.1.5
+        version: 6.1.5(pixi.js@8.18.1)
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
       unzipit:
         specifier: ^1.4.3
         version: 1.4.3
@@ -270,8 +270,8 @@ importers:
         specifier: 1.1.2
         version: link:../framework
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
       uuid:
         specifier: ^14.0.0
         version: 14.0.0
@@ -292,8 +292,8 @@ importers:
         specifier: 1.1.2
         version: link:../framework
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
 
   packages/storybook-preset-vite:
     dependencies:
@@ -333,8 +333,8 @@ importers:
         specifier: ^1.18.4
         version: 1.18.8
       pixi.js:
-        specifier: ^8.0.0
-        version: 8.9.2
+        specifier: ^8.18.1
+        version: 8.18.1
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(@swc/core@1.15.8)(jiti@2.4.2)(typescript@5.3.3)
@@ -3933,9 +3933,6 @@ packages:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
 
-  /@types/css-font-loading-module@0.0.12:
-    resolution: {integrity: sha512-x2tZZYkSxXqWvTDgveSynfjq/T2HyiZHXb00j/+gy19yp70PHCizM48XFdjBCWH7eHBD0R5i/pw9yMBP/BH5uA==}
-
   /@types/deep-eql@4.0.2:
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
@@ -3947,8 +3944,8 @@ packages:
     resolution: {integrity: sha512-JSWRMozjFKsGlEjiiKajUjIJVKuKdE3oVy2DNtK+fUo8q82nhFZ2CPQwicAIkXrofahDXrWJ7mjelvZphMS98Q==}
     dev: true
 
-  /@types/earcut@2.1.4:
-    resolution: {integrity: sha512-qp3m9PPz4gULB9MhjGID7wpo3gJ4bTGXm7ltNDsmOvsPduTeHp8wSW9YckBj3mljeOh4F0m2z/0JKAALRKbmLQ==}
+  /@types/earcut@3.0.0:
+    resolution: {integrity: sha512-k/9fOUGO39yd2sCjrbAJvGDEQvRwRnQIZlBz43roGwUZo5SHAmyVvSFyaVVZkicRVCaDXPKlbxrUcBuJoSWunQ==}
 
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -4995,13 +4992,12 @@ packages:
   /@webcontainer/env@1.1.1:
     resolution: {integrity: sha512-6aN99yL695Hi9SuIk1oC88l9o0gmxL1nGWWQ/kNy81HigJ0FoaoTXpytCj6ItzgyCEwA9kF1wixsTuv5cjsgng==}
 
-  /@webgpu/types@0.1.60:
-    resolution: {integrity: sha512-8B/tdfRFKdrnejqmvq95ogp8tf52oZ51p3f4QD5m5Paey/qlX4Rhhy5Y8tgFMi7Ms70HzcMMw3EQjH/jdhTwlA==}
+  /@webgpu/types@0.1.69:
+    resolution: {integrity: sha512-RPmm6kgRbI8e98zSD3RVACvnuktIja5+yLgDAkTmxLr90BEwdTXRQWNLF3ETTTyH/8mKhznZuN5AveXYFEsMGQ==}
 
-  /@xmldom/xmldom@0.8.10:
-    resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
+  /@xmldom/xmldom@0.8.13:
+    resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
 
   /@xtuc/ieee754@1.2.0:
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -6233,8 +6229,8 @@ packages:
       stream-shift: 1.0.3
     dev: true
 
-  /earcut@2.2.4:
-    resolution: {integrity: sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==}
+  /earcut@3.0.2:
+    resolution: {integrity: sha512-X7hshQbLyMJ/3RPhyObLARM2sNxxmRALLKx1+NVFFnQ9gKzmCrxm9+uLIAdBcvc8FNLpctqlQ2V6AE92Ol9UDQ==}
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -9009,28 +9005,28 @@ packages:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
 
-  /pixi-filters@6.1.2(pixi.js@8.9.2):
-    resolution: {integrity: sha512-zGyrMTcfapSIS8We+8RPzxIYkrUhn0KamRFA9qWwxggOk/guJcW05djg8xNvmNsCxn6LzxK5sODeEFIf9SF5Xg==}
+  /pixi-filters@6.1.5(pixi.js@8.18.1):
+    resolution: {integrity: sha512-Ewb/J+kxAbaNN+0/ATJbglAJG+skGJfh7BIDP3ILIDdD6wWk1p0pGa25pVf1T8hGBOQSUNVAmwwJBwkj+cyLLA==}
     peerDependencies:
       pixi.js: '>=8.0.0-0'
     dependencies:
       '@types/gradient-parser': 0.1.5
-      pixi.js: 8.9.2
+      pixi.js: 8.18.1
     dev: false
 
-  /pixi.js@8.9.2:
-    resolution: {integrity: sha512-oLFBkOOA/O6OpT5T8o05AxgZB9x9yWNzEQ+WTNZZFoCvfU2GdT4sFTjpVFuHQzgZPmAm/1IFhKdNiXVnlL8PRw==}
+  /pixi.js@8.18.1:
+    resolution: {integrity: sha512-6LUPWYgulZhp/w4kam2XHXB0QedISZIqrJbRdHLLQ3csn5a38uzKxAp6B5j6s89QFYaIJbg95kvgTRcbgpO1ow==}
     dependencies:
       '@pixi/colord': 2.9.6
-      '@types/css-font-loading-module': 0.0.12
-      '@types/earcut': 2.1.4
-      '@webgpu/types': 0.1.60
-      '@xmldom/xmldom': 0.8.10
-      earcut: 2.2.4
+      '@types/earcut': 3.0.0
+      '@webgpu/types': 0.1.69
+      '@xmldom/xmldom': 0.8.13
+      earcut: 3.0.2
       eventemitter3: 5.0.4
       gifuct-js: 2.1.2
       ismobilejs: 1.1.1
       parse-svg-path: 0.1.2
+      tiny-lru: 11.4.7
 
   /pkce-challenge@5.0.0:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}
@@ -10119,6 +10115,10 @@ packages:
 
   /tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
+
+  /tiny-lru@11.4.7:
+    resolution: {integrity: sha512-w/Te7uMUVeH0CR8vZIjr+XiN41V+30lkDdK+NRIDCUYKKuL9VcmaUEmaPISuwGhLlrTGh5yu18lENtR9axSxYw==}
+    engines: {node: '>=12'}
 
   /tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}

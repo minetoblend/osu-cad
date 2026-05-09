@@ -26,6 +26,6 @@
   "dependencies": {
     "@osucad/core": "1.1.2",
     "@osucad/framework": "1.1.2",
-    "pixi.js": "^8.9.2"
+    "pixi.js": "^8.18.1"
   }
 }

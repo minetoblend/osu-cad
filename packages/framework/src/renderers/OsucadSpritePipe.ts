@@ -22,7 +22,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
   constructor(renderer: Renderer)
   {
     this._renderer = renderer;
-    this._renderer.renderableGC.addManagedHash(this, "_gpuSpriteHash");
+    this._renderer.gc.addCollection(this, "_gpuSpriteHash", "hash");
   }
 
   public addRenderable(sprite: SpriteDrawNode, instructionSet: InstructionSet)
