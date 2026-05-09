@@ -5,6 +5,11 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+    # Pinned by nx 22.7.x; only used by Nx Cloud telemetry / `nx release` and
+    # deep jest test transitives — not reachable in build/test code paths.
+    ignore:
+      - dependency-name: "axios"
+      - dependency-name: "minimatch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
