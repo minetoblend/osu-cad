@@ -42,7 +42,7 @@
     "global": "^4.4.0",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "tsup": "^8.4.0"
+    "tsup": "^8.5.1"
   },
   "devDependencies": {
   },
