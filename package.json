@@ -11,7 +11,7 @@
     "@nx/js": "20.8.4",
     "@nx/node": "20.8.4",
     "@nx/storybook": "20.8.4",
-    "@nx/vite": "20.8.4",
+    "@nx/vite": "22.7.1",
     "@nx/web": "20.8.4",
     "@osucad/storybook-preset-vite": "workspace:^",
     "@osucad/storybook-renderer": "workspace:^",
