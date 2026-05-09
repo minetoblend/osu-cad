@@ -304,11 +304,11 @@ importers:
         specifier: ^18.0.0
         version: 18.16.9
       react:
-        specifier: 16.14.0
-        version: 16.14.0
+        specifier: 19.2.6
+        version: 19.2.6
       react-dom:
         specifier: 16.14.0
-        version: 16.14.0(react@16.14.0)
+        version: 16.14.0(react@19.2.6)
     devDependencies:
       tsup:
         specifier: ^8.4.0
@@ -372,11 +372,11 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0
       react:
-        specifier: 16.14.0
-        version: 16.14.0
+        specifier: 19.2.6
+        version: 19.2.6
       react-dom:
         specifier: 16.14.0
-        version: 16.14.0(react@16.14.0)
+        version: 16.14.0(react@19.2.6)
       tsup:
         specifier: ^8.4.0
         version: 8.4.0(@swc/core@1.5.29)(jiti@2.4.2)(typescript@5.7.3)
@@ -2504,7 +2504,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.0
     dev: true
 
-  /@mdx-js/react@3.1.0(@types/react@19.2.14)(react@16.14.0):
+  /@mdx-js/react@3.1.0(@types/react@19.2.14)(react@19.2.6):
     resolution: {integrity: sha512-QjHtSaoameoalGnKDT3FoIl4+9RwyTmo9ZJGBdLOks/YOiWHoRDI3PUwEzOE7kEmGcV3AFcp9K6dYu9rEuKLAQ==}
     peerDependencies:
       '@types/react': '>=16'
@@ -2512,7 +2512,7 @@ packages:
     dependencies:
       '@types/mdx': 2.0.13
       '@types/react': 19.2.14
-      react: 16.14.0
+      react: 19.2.6
     dev: true
 
   /@microsoft/api-extractor-model@7.30.6(@types/node@18.16.9):
@@ -3609,12 +3609,12 @@ packages:
     peerDependencies:
       storybook: ^8.6.12
     dependencies:
-      '@mdx-js/react': 3.1.0(@types/react@19.2.14)(react@16.14.0)
-      '@storybook/blocks': 8.6.12(react-dom@16.14.0)(react@16.14.0)(storybook@8.6.17)
+      '@mdx-js/react': 3.1.0(@types/react@19.2.14)(react@19.2.6)
+      '@storybook/blocks': 8.6.12(react-dom@16.14.0)(react@19.2.6)(storybook@8.6.17)
       '@storybook/csf-plugin': 8.6.12(storybook@8.6.17)
-      '@storybook/react-dom-shim': 8.6.12(react-dom@16.14.0)(react@16.14.0)(storybook@8.6.17)
-      react: 16.14.0
-      react-dom: 16.14.0(react@16.14.0)
+      '@storybook/react-dom-shim': 8.6.12(react-dom@16.14.0)(react@19.2.6)(storybook@8.6.17)
+      react: 19.2.6
+      react-dom: 16.14.0(react@19.2.6)
       storybook: 8.6.17
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -3687,7 +3687,7 @@ packages:
       storybook: 8.6.17
     dev: true
 
-  /@storybook/blocks@8.6.12(react-dom@16.14.0)(react@16.14.0)(storybook@8.6.17):
+  /@storybook/blocks@8.6.12(react-dom@16.14.0)(react@19.2.6)(storybook@8.6.17):
     resolution: {integrity: sha512-DohlTq6HM1jDbHYiXL4ZvZ00VkhpUp5uftzj/CZDLY1fYHRjqtaTwWm2/OpceivMA8zDitLcq5atEZN+f+siTg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -3699,9 +3699,9 @@ packages:
       react-dom:
         optional: true
     dependencies:
-      '@storybook/icons': 1.4.0(react-dom@16.14.0)(react@16.14.0)
-      react: 16.14.0
-      react-dom: 16.14.0(react@16.14.0)
+      '@storybook/icons': 1.4.0(react-dom@16.14.0)(react@19.2.6)
+      react: 19.2.6
+      react-dom: 16.14.0(react@19.2.6)
       storybook: 8.6.17
       ts-dedent: 2.2.0
     dev: true
@@ -3815,26 +3815,26 @@ packages:
     resolution: {integrity: sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==}
     dev: true
 
-  /@storybook/icons@1.4.0(react-dom@16.14.0)(react@16.14.0):
+  /@storybook/icons@1.4.0(react-dom@16.14.0)(react@19.2.6):
     resolution: {integrity: sha512-Td73IeJxOyalzvjQL+JXx72jlIYHgs+REaHiREOqfpo3A2AYYG71AUbcv+lg7mEDIweKVCxsMQ0UKo634c8XeA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0-beta
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0-beta
     dependencies:
-      react: 16.14.0
-      react-dom: 16.14.0(react@16.14.0)
+      react: 19.2.6
+      react-dom: 16.14.0(react@19.2.6)
     dev: true
 
-  /@storybook/react-dom-shim@8.6.12(react-dom@16.14.0)(react@16.14.0)(storybook@8.6.17):
+  /@storybook/react-dom-shim@8.6.12(react-dom@16.14.0)(react@19.2.6)(storybook@8.6.17):
     resolution: {integrity: sha512-51QvoimkBzYs8s3rCYnY5h0cFqLz/Mh0vRcughwYaXckWzDBV8l67WBO5Xf5nBsukCbWyqBVPpEQLww8s7mrLA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0-beta
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0-beta
       storybook: ^8.6.12
     dependencies:
-      react: 16.14.0
-      react-dom: 16.14.0(react@16.14.0)
+      react: 19.2.6
+      react-dom: 16.14.0(react@19.2.6)
       storybook: 8.6.17
     dev: true
 
@@ -9418,7 +9418,7 @@ packages:
       unpipe: 1.0.0
     dev: true
 
-  /react-dom@16.14.0(react@16.14.0):
+  /react-dom@16.14.0(react@19.2.6):
     resolution: {integrity: sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==}
     peerDependencies:
       react: ^16.14.0
@@ -9426,7 +9426,7 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       prop-types: 15.8.1
-      react: 16.14.0
+      react: 19.2.6
       scheduler: 0.19.1
 
   /react-is@16.13.1:
@@ -9436,13 +9436,9 @@ packages:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
     dev: true
 
-  /react@16.14.0:
-    resolution: {integrity: sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==}
+  /react@19.2.6:
+    resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
     engines: {node: '>=0.10.0'}
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      prop-types: 15.8.1
 
   /readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
