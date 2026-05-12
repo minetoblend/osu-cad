@@ -1,4 +1,4 @@
-name: Publish Docker image to GitHub Packages
+name: Publish legacy Docker image to GitHub Packages
 
 on:
   # Allows you to run this workflow manually from the Actions tab
