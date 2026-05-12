@@ -25,7 +25,7 @@ WORKDIR /prod/server
 ENV NODE_ENV=production
 
 EXPOSE 3000
-CMD [ "pnpm", "start:prod" ]
+CMD [ "npm", "run", "start:prod" ]
 
 FROM base AS client-ssr
 COPY --from=build /prod/client /prod/client
@@ -34,4 +34,4 @@ WORKDIR /prod/client
 ENV NODE_ENV=production
 
 EXPOSE 5173
-CMD [ "pnpm", "start" ]
+CMD [ "npm", "run", "start" ]
