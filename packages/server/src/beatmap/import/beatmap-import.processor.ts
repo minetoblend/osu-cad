@@ -263,10 +263,10 @@ export class BeatmapImportProcessor {
         .mkdir(parent, { recursive: true })
         .catch((e) => console.error('Failed to create directory', parent, e));
 
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         zipEntry
           .pipe(fs.createWriteStream(join(this.directory, zipEntry.path)))
-          .on('finish', resolve)
+          .on('finish', () => resolve())
           .on('error', reject);
       });
     }

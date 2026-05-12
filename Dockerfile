@@ -1,5 +1,7 @@
-FROM ghcr.io/pnpm/pnpm:11.1.0 AS base
-RUN pnpm runtime set node 22 -g
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 FROM base AS build
 COPY . /usr/src/app
@@ -13,8 +15,8 @@ ENV VITE_BASEURL=$BASEURL
 ENV VITE_SSR_API_BASEURL=$SSR_API_BASEURL
 
 RUN pnpm run -r build
-RUN pnpm deploy --filter "@osucad/server" --prod /prod/server
-RUN pnpm deploy --filter "@osucad/client" --prod /prod/client
+RUN pnpm deploy --legacy --filter "@osucad/server" --prod /prod/server
+RUN pnpm deploy --legacy --filter "@osucad/client" --prod /prod/client
 
 FROM base AS server
 COPY --from=build /prod/server /prod/server

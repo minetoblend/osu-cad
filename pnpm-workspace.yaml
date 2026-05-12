@@ -1,2 +1,9 @@
 packages:
   - 'packages/*'
+allowBuilds:
+  '@nestjs/core': true
+  '@parcel/watcher': true
+  esbuild: true
+  msgpackr-extract: true
+  sharp: true
+  vue-demi: true

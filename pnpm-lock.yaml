@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  osu-parsers@4.1.6:
-    hash: 5d46332fa76bca27dd15d39db53a9997d122451f4678c21a459ed4c978166adb
-    path: patches/osu-parsers@4.1.6.patch
-
 importers:
 
   .: {}
@@ -74,7 +69,7 @@ importers:
         version: 16.6.1
       express:
         specifier: ^4.18.3
-        version: 4.22.2
+        version: 4.22.1
       gsap:
         specifier: ^3.12.4
         version: 3.15.0
@@ -116,7 +111,7 @@ importers:
         version: 1.11.20
       unocss-preset-grid:
         specifier: ^1.5.0
-        version: 1.6.5(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)))
+        version: 1.6.5(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)))
       unplugin-vue-router:
         specifier: ^0.7.0
         version: 0.7.0(rollup@3.30.0)(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
@@ -131,7 +126,7 @@ importers:
         version: 2.1.0
       vite-plugin-inspect:
         specifier: ^0.8.3
-        version: 0.8.9(@nuxt/kit@3.21.5)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+        version: 0.8.9(@nuxt/kit@3.21.5)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       vue:
         specifier: ^3.3.4
         version: 3.5.34(typescript@5.9.3)
@@ -144,7 +139,7 @@ importers:
     devDependencies:
       '@capacitor/assets':
         specifier: ^3.0.4
-        version: 3.0.5(@types/node@20.19.41)(typescript@5.9.3)
+        version: 3.0.5(@types/node@20.19.40)(typescript@5.9.3)
       '@capacitor/cli':
         specifier: ^5.7.0
         version: 5.7.8
@@ -153,7 +148,7 @@ importers:
         version: 1.2.4
       '@types/node':
         specifier: ^20.10.5
-        version: 20.19.41
+        version: 20.19.40
       '@types/pako':
         specifier: ^2.0.3
         version: 2.0.4
@@ -177,10 +172,10 @@ importers:
         version: 0.58.9
       '@vitejs/plugin-vue':
         specifier: ^4.2.3
-        version: 4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3))
+        version: 4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3))
       '@yankeeinlondon/meta-builder':
         specifier: ^1.4.0
-        version: 1.4.0(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+        version: 1.4.0(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -204,7 +199,7 @@ importers:
         version: 2.3.1
       md-powerpack:
         specifier: ^1.0.3
-        version: 1.0.3(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(fp-ts@2.16.11)(happy-dom@8.9.0)(markdown-it@14.1.1)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)))(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+        version: 1.0.3(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(fp-ts@2.16.11)(happy-dom@8.9.0)(markdown-it@14.1.1)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)))(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       sass:
         specifier: ^1.33.0
         version: 1.99.0
@@ -213,10 +208,10 @@ importers:
         version: 5.9.3
       unocss:
         specifier: ^0.58.5
-        version: 0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+        version: 0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       unocss-preset-scrollbar:
         specifier: ^0.3.1
-        version: 0.3.1(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)))
+        version: 0.3.1(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)))
       unplugin-auto-import:
         specifier: ^0.17.2
         version: 0.17.8(@nuxt/kit@3.21.5)(@vueuse/core@10.11.1(vue@3.5.34(typescript@5.9.3)))(rollup@3.30.0)
@@ -225,16 +220,16 @@ importers:
         version: 0.26.0(@babel/parser@7.29.3)(@nuxt/kit@3.21.5)(rollup@3.30.0)(vue@3.5.34(typescript@5.9.3))
       unplugin-vue-markdown:
         specifier: ^0.26.0
-        version: 0.26.3(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+        version: 0.26.3(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       vite:
         specifier: ^4.4.5
-        version: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+        version: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
       vite-plugin-md:
         specifier: ^0.21.5
-        version: 0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+        version: 0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       vite-plugin-vue-layouts:
         specifier: ^0.11.0
-        version: 0.11.0(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
+        version: 0.11.0(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
       vue-tsc:
         specifier: ^1.8.5
         version: 1.8.27(typescript@5.9.3)
@@ -358,10 +353,10 @@ importers:
         version: 4.1.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)
       '@nestjs/serve-static':
         specifier: ^4.0.0
-        version: 4.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(express@4.22.2)
+        version: 4.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(express@4.22.1)
       '@nestjs/typeorm':
         specifier: ^10.0.1
-        version: 10.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.41))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)))
+        version: 10.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.40))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)))
       '@nestjs/websockets':
         specifier: ^10.3.0
         version: 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(@nestjs/platform-socket.io@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -424,13 +419,13 @@ importers:
         version: 1.4.5-lts.1
       mysql2:
         specifier: ^3.6.5
-        version: 3.22.3(@types/node@20.19.41)
+        version: 3.22.3(@types/node@20.19.40)
       osu-classes:
         specifier: ^3.0.1
         version: 3.1.0
       osu-parsers:
         specifier: 4.1.6
-        version: 4.1.6(patch_hash=5d46332fa76bca27dd15d39db53a9997d122451f4678c21a459ed4c978166adb)(osu-classes@3.1.0)
+        version: 4.1.6(osu-classes@3.1.0)
       osu-standard-stable:
         specifier: ^5.0.0
         version: 5.0.1(osu-classes@3.1.0)
@@ -454,7 +449,7 @@ importers:
         version: 4.8.3
       typeorm:
         specifier: ^0.3.17
-        version: 0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.41))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+        version: 0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.40))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       unzipper:
         specifier: ^0.10.14
         version: 0.10.14
@@ -491,7 +486,7 @@ importers:
         version: 1.4.13
       '@types/node':
         specifier: ^20.3.1
-        version: 20.19.41
+        version: 20.19.40
       '@types/supertest':
         specifier: ^2.0.12
         version: 2.0.16
@@ -518,7 +513,7 @@ importers:
         version: 5.5.5(@types/eslint@9.6.1)(eslint-config-prettier@9.1.2(eslint@8.57.1))(eslint@8.57.1)(prettier@3.8.3)
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+        version: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       prettier:
         specifier: ^3.0.0
         version: 3.8.3
@@ -530,13 +525,13 @@ importers:
         version: 6.3.4
       ts-jest:
         specifier: ^29.1.0
-        version: 29.4.9(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)))(typescript@5.9.3)
+        version: 29.4.9(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)))(typescript@5.9.3)
       ts-loader:
         specifier: ^9.4.3
         version: 9.5.7(typescript@5.9.3)(webpack@5.97.1)
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.2(@types/node@20.19.41)(typescript@5.9.3)
+        version: 10.9.2(@types/node@20.19.40)(typescript@5.9.3)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2497,8 +2492,8 @@ packages:
   '@types/multer@1.4.13':
     resolution: {integrity: sha512-bhhdtPw7JqCiEfC9Jimx5LqX9BDIPJEh2q/fQ4bqbBPtyEZYr3cvF22NwG0DmPZNYA0CAf2CnqDB4KIGGpJcaw==}
 
-  '@types/node@20.19.41':
-    resolution: {integrity: sha512-ECymXOukMnOoVkC2bb1Vc/w/836DXncOg5m8Xj1RH7xSHZJWNYY6Zh7EH477vcnD5egKNNfy2RpNOmuChhFPgQ==}
+  '@types/node@20.19.40':
+    resolution: {integrity: sha512-xxx6M2IpSTnnKcR0cMvIiohkiCx20/oRPtWGbenFygKCGl3zqUzdNjQ/1V4solq1LU+dgv0nQzeGOuqkqZGg0Q==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -4277,10 +4272,6 @@ packages:
 
   express@4.22.1:
     resolution: {integrity: sha512-F2X8g9P1X7uCPZMA3MVf9wcTqlyNp7IhH5qPCI0izhaOIYXaW9L535tGA3qmjRzpH+bZczqq7hVKxTR4NWnu+g==}
-    engines: {node: '>= 0.10.0'}
-
-  express@4.22.2:
-    resolution: {integrity: sha512-IuL+Elrou2ZvCFHs18/CIzy2Nzvo25nZ1/D2eIZlz7c+QUayAcYoiM2BthCjs+EBHVpjYjcuLDAiCWgeIX3X1Q==}
     engines: {node: '>= 0.10.0'}
 
   exsolve@1.0.8:
@@ -8407,7 +8398,7 @@ snapshots:
       '@bull-board/api': 5.23.0(@bull-board/ui@5.23.0)
       '@bull-board/ui': 5.23.0
       ejs: 3.1.10
-      express: 4.22.2
+      express: 4.22.1
     transitivePeerDependencies:
       - supports-color
 
@@ -8433,12 +8424,12 @@ snapshots:
     dependencies:
       '@capacitor/core': 5.7.8
 
-  '@capacitor/assets@3.0.5(@types/node@20.19.41)(typescript@5.9.3)':
+  '@capacitor/assets@3.0.5(@types/node@20.19.40)(typescript@5.9.3)':
     dependencies:
       '@capacitor/cli': 5.7.8
       '@ionic/utils-array': 2.1.6
       '@ionic/utils-fs': 3.1.7
-      '@trapezedev/project': 7.1.4(@types/node@20.19.41)(typescript@5.9.3)
+      '@trapezedev/project': 7.1.4(@types/node@20.19.40)(typescript@5.9.3)
       commander: 8.3.0
       debug: 4.3.4
       fs-extra: 10.1.0
@@ -8937,27 +8928,27 @@ snapshots:
   '@jest/console@29.7.0':
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       chalk: 4.1.2
       jest-message-util: 29.7.0
       jest-util: 29.7.0
       slash: 3.0.0
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      jest-config: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -8982,7 +8973,7 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       jest-mock: 29.7.0
 
   '@jest/expect-utils@29.7.0':
@@ -9000,7 +8991,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -9022,7 +9013,7 @@ snapshots:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       '@jridgewell/trace-mapping': 0.3.31
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       chalk: 4.1.2
       collect-v8-coverage: 1.0.3
       exit: 0.1.2
@@ -9092,7 +9083,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -9369,13 +9360,13 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/serve-static@4.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(express@4.22.2)':
+  '@nestjs/serve-static@4.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(express@4.22.1)':
     dependencies:
       '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(@nestjs/websockets@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       path-to-regexp: 0.2.5
     optionalDependencies:
-      express: 4.22.2
+      express: 4.22.1
 
   '@nestjs/testing@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(@nestjs/platform-express@10.4.22)':
     dependencies:
@@ -9385,13 +9376,13 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)
 
-  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.41))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)))':
+  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.40))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)))':
     dependencies:
       '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(@nestjs/websockets@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       reflect-metadata: 0.1.14
       rxjs: 7.8.2
-      typeorm: 0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.41))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      typeorm: 0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.40))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       uuid: 9.0.1
 
   '@nestjs/websockets@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(@nestjs/platform-socket.io@10.4.22)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
@@ -9928,7 +9919,7 @@ snapshots:
 
   '@trapezedev/gradle-parse@7.1.3': {}
 
-  '@trapezedev/project@7.1.4(@types/node@20.19.41)(typescript@5.9.3)':
+  '@trapezedev/project@7.1.4(@types/node@20.19.40)(typescript@5.9.3)':
     dependencies:
       '@ionic/utils-fs': 3.1.7
       '@ionic/utils-subprocess': 2.1.14
@@ -9949,7 +9940,7 @@ snapshots:
       replace: 1.2.2
       tempy: 3.2.0
       tmp: 0.2.5
-      ts-node: 10.9.2(@types/node@20.19.41)(typescript@5.9.3)
+      ts-node: 10.9.2(@types/node@20.19.40)(typescript@5.9.3)
       xcode: 3.0.1
       xml-js: 1.6.11
       xpath: 0.0.32
@@ -9993,7 +9984,7 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/chai-subset@1.3.6(@types/chai@4.3.20)':
     dependencies:
@@ -10003,13 +9994,13 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/cookiejar@2.1.5': {}
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/css-font-loading-module@0.0.12': {}
 
@@ -10017,7 +10008,7 @@ snapshots:
 
   '@types/engine.io@3.1.10':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/eslint-scope@3.7.7':
     dependencies:
@@ -10033,7 +10024,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.8':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       '@types/qs': 6.15.1
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -10059,11 +10050,11 @@ snapshots:
 
   '@types/fs-extra@8.1.5':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/http-errors@2.0.5': {}
 
@@ -10112,7 +10103,7 @@ snapshots:
     dependencies:
       '@types/express': 4.17.25
 
-  '@types/node@20.19.41':
+  '@types/node@20.19.40':
     dependencies:
       undici-types: 6.21.0
 
@@ -10129,16 +10120,16 @@ snapshots:
   '@types/send@0.17.6':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/serve-static@1.15.10':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       '@types/send': 0.17.6
 
   '@types/slice-ansi@4.0.0': {}
@@ -10152,7 +10143,7 @@ snapshots:
   '@types/socket.io@2.1.13':
     dependencies:
       '@types/engine.io': 3.1.10
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       '@types/socket.io-parser': 3.0.0
     transitivePeerDependencies:
       - supports-color
@@ -10163,7 +10154,7 @@ snapshots:
     dependencies:
       '@types/cookiejar': 2.1.5
       '@types/methods': 1.1.4
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       form-data: 4.0.5
 
   '@types/supertest@2.0.16':
@@ -10172,7 +10163,7 @@ snapshots:
 
   '@types/unzipper@0.10.11':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/uuid@9.0.8': {}
 
@@ -10186,7 +10177,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -10310,22 +10301,22 @@ snapshots:
       unhead: 1.11.20
       vue: 3.5.34(typescript@5.9.3)
 
-  '@unocss/astro@0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@unocss/astro@0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
       '@unocss/core': 0.47.6
       '@unocss/reset': 0.47.6
-      '@unocss/vite': 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@unocss/vite': 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     transitivePeerDependencies:
       - rollup
       - vite
 
-  '@unocss/astro@0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@unocss/astro@0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
       '@unocss/core': 0.58.9
       '@unocss/reset': 0.58.9
-      '@unocss/vite': 0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@unocss/vite': 0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     optionalDependencies:
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - rollup
 
@@ -10563,7 +10554,7 @@ snapshots:
     dependencies:
       '@unocss/core': 0.58.9
 
-  '@unocss/vite@0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@unocss/vite@0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.3.0(rollup@3.30.0)
@@ -10573,11 +10564,11 @@ snapshots:
       '@unocss/scope': 0.47.6
       '@unocss/transformer-directives': 0.47.6
       magic-string: 0.27.0
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - rollup
 
-  '@unocss/vite@0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@unocss/vite@0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.3.0(rollup@3.30.0)
@@ -10589,13 +10580,13 @@ snapshots:
       chokidar: 3.6.0
       fast-glob: 3.3.3
       magic-string: 0.30.21
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - rollup
 
-  '@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3))':
+  '@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3))':
     dependencies:
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
       vue: 3.5.34(typescript@5.9.3)
 
   '@volar/language-core@1.11.1':
@@ -10801,13 +10792,13 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@yankeeinlondon/builder-api@0.4.1(fp-ts@2.16.11)(inferred-types@0.22.8)(markdown-it@14.1.1)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)))':
+  '@yankeeinlondon/builder-api@0.4.1(fp-ts@2.16.11)(inferred-types@0.22.8)(markdown-it@14.1.1)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)))':
     dependencies:
       '@yankeeinlondon/happy-wrapper': 2.10.1(sass@1.99.0)(terser@5.47.1)
       fp-ts: 2.16.11
       inferred-types: 0.22.8
       markdown-it: 14.1.1
-      vite-plugin-md: 0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      vite-plugin-md: 0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitest/browser'
@@ -10822,14 +10813,14 @@ snapshots:
       - supports-color
       - terser
 
-  '@yankeeinlondon/builder-api@1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@yankeeinlondon/builder-api@1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
       '@types/markdown-it': 12.2.3
       '@yankeeinlondon/happy-wrapper': 2.10.1(sass@1.99.0)(terser@5.47.1)
       fp-ts: 2.16.11
       inferred-types: 0.37.6(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)
       markdown-it: 13.0.2
-      vite-plugin-md: 0.22.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      vite-plugin-md: 0.22.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitejs/plugin-vue'
@@ -10847,16 +10838,16 @@ snapshots:
       - terser
       - vite
 
-  '@yankeeinlondon/code-builder@1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@yankeeinlondon/code-builder@1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
       '@types/markdown-it': 12.2.3
-      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       '@yankeeinlondon/happy-wrapper': 2.10.1(sass@1.99.0)(terser@5.47.1)
       inferred-types: 0.37.6(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)
       markdown-it: 13.0.2
       pathe: 1.1.2
       prismjs: 1.30.0
-      unocss: 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      unocss: 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@unocss/webpack'
@@ -10916,9 +10907,9 @@ snapshots:
       - supports-color
       - terser
 
-  '@yankeeinlondon/link-builder@1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@yankeeinlondon/link-builder@1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
-      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       '@yankeeinlondon/happy-wrapper': 2.10.1(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - '@edge-runtime/vm'
@@ -10936,9 +10927,9 @@ snapshots:
       - terser
       - vite
 
-  '@yankeeinlondon/meta-builder@1.4.0(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))':
+  '@yankeeinlondon/meta-builder@1.4.0(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))':
     dependencies:
-      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       inferred-types: 0.37.6(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - '@edge-runtime/vm'
@@ -11845,13 +11836,13 @@ snapshots:
     dependencies:
       buffer: 5.7.1
 
-  create-jest@29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)):
+  create-jest@29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      jest-config: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -12106,7 +12097,7 @@ snapshots:
   engine.io@6.6.7:
     dependencies:
       '@types/cors': 2.8.19
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       '@types/ws': 8.18.1
       accepts: 1.3.8
       base64id: 2.0.0
@@ -12407,42 +12398,6 @@ snapshots:
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.4
-      content-disposition: 0.5.4
-      content-type: 1.0.5
-      cookie: 0.7.2
-      cookie-signature: 1.0.7
-      debug: 2.6.9
-      depd: 2.0.0
-      encodeurl: 2.0.0
-      escape-html: 1.0.3
-      etag: 1.8.1
-      finalhandler: 1.3.2
-      fresh: 0.5.2
-      http-errors: 2.0.1
-      merge-descriptors: 1.0.3
-      methods: 1.1.2
-      on-finished: 2.4.1
-      parseurl: 1.3.3
-      path-to-regexp: 0.1.13
-      proxy-addr: 2.0.7
-      qs: 6.14.2
-      range-parser: 1.2.1
-      safe-buffer: 5.2.1
-      send: 0.19.2
-      serve-static: 1.16.3
-      setprototypeof: 1.2.0
-      statuses: 2.0.2
-      type-is: 1.6.18
-      utils-merge: 1.0.1
-      vary: 1.1.2
-    transitivePeerDependencies:
-      - supports-color
-
-  express@4.22.2:
-    dependencies:
-      accepts: 1.3.8
-      array-flatten: 1.1.1
       body-parser: 1.20.5
       content-disposition: 0.5.4
       content-type: 1.0.5
@@ -12462,7 +12417,7 @@ snapshots:
       parseurl: 1.3.3
       path-to-regexp: 0.1.13
       proxy-addr: 2.0.7
-      qs: 6.15.1
+      qs: 6.14.2
       range-parser: 1.2.1
       safe-buffer: 5.2.1
       send: 0.19.2
@@ -13201,7 +13156,7 @@ snapshots:
       '@jest/expect': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       chalk: 4.1.2
       co: 4.6.0
       dedent: 1.7.2
@@ -13221,16 +13176,16 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)):
+  jest-cli@29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      create-jest: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       exit: 0.1.2
       import-local: 3.2.0
-      jest-config: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      jest-config: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -13240,7 +13195,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-config@29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)):
+  jest-config@29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)):
     dependencies:
       '@babel/core': 7.29.0
       '@jest/test-sequencer': 29.7.0
@@ -13265,8 +13220,8 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.19.41
-      ts-node: 10.9.2(@types/node@20.19.41)(typescript@5.9.3)
+      '@types/node': 20.19.40
+      ts-node: 10.9.2(@types/node@20.19.40)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -13295,7 +13250,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -13305,7 +13260,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -13344,7 +13299,7 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       jest-util: 29.7.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@29.7.0):
@@ -13379,7 +13334,7 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       chalk: 4.1.2
       emittery: 0.13.1
       graceful-fs: 4.2.11
@@ -13407,7 +13362,7 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       chalk: 4.1.2
       cjs-module-lexer: 1.4.3
       collect-v8-coverage: 1.0.3
@@ -13453,7 +13408,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -13472,7 +13427,7 @@ snapshots:
     dependencies:
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.13.1
@@ -13481,23 +13436,23 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)):
+  jest@29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       '@jest/types': 29.6.3
       import-local: 3.2.0
-      jest-cli: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      jest-cli: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -13698,7 +13653,7 @@ snapshots:
 
   lzma-js-simple-v2@1.2.3:
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
 
   magic-string-ast@0.7.1:
     dependencies:
@@ -13762,12 +13717,12 @@ snapshots:
 
   math-intrinsics@1.1.0: {}
 
-  md-powerpack@1.0.3(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(fp-ts@2.16.11)(happy-dom@8.9.0)(markdown-it@14.1.1)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)))(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  md-powerpack@1.0.3(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(fp-ts@2.16.11)(happy-dom@8.9.0)(markdown-it@14.1.1)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)))(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
-      '@yankeeinlondon/builder-api': 0.4.1(fp-ts@2.16.11)(inferred-types@0.22.8)(markdown-it@14.1.1)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)))
-      '@yankeeinlondon/code-builder': 1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
-      '@yankeeinlondon/link-builder': 1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
-      '@yankeeinlondon/meta-builder': 1.4.0(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/builder-api': 0.4.1(fp-ts@2.16.11)(inferred-types@0.22.8)(markdown-it@14.1.1)(sass@1.99.0)(terser@5.47.1)(vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)))
+      '@yankeeinlondon/code-builder': 1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(rollup@3.30.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/link-builder': 1.2.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/meta-builder': 1.4.0(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       inferred-types: 0.22.8
     transitivePeerDependencies:
       - '@edge-runtime/vm'
@@ -14009,9 +13964,9 @@ snapshots:
 
   mute-stream@1.0.0: {}
 
-  mysql2@3.22.3(@types/node@20.19.41):
+  mysql2@3.22.3(@types/node@20.19.40):
     dependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       aws-ssl-profiles: 1.1.2
       denque: 2.1.0
       generate-function: 2.3.1
@@ -14207,7 +14162,7 @@ snapshots:
 
   osu-classes@3.1.0: {}
 
-  osu-parsers@4.1.6(patch_hash=5d46332fa76bca27dd15d39db53a9997d122451f4678c21a459ed4c978166adb)(osu-classes@3.1.0):
+  osu-parsers@4.1.6(osu-classes@3.1.0):
     dependencies:
       lzma-js-simple-v2: 1.2.3
       osu-classes: 3.1.0
@@ -15324,12 +15279,12 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
-  ts-jest@29.4.9(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)))(typescript@5.9.3):
+  ts-jest@29.4.9(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)))(typescript@5.9.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
       handlebars: 4.7.9
-      jest: 29.7.0(@types/node@20.19.41)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3))
+      jest: 29.7.0(@types/node@20.19.40)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3))
       json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
@@ -15354,14 +15309,14 @@ snapshots:
       typescript: 5.9.3
       webpack: 5.97.1
 
-  ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3):
+  ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       acorn: 8.16.0
       acorn-walk: 8.3.5
       arg: 4.1.3
@@ -15430,7 +15385,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.41))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.41)(typescript@5.9.3)):
+  typeorm@0.3.29(ioredis@5.10.1)(mongodb@6.20.0)(mysql2@3.22.3(@types/node@20.19.40))(redis@4.7.1)(ts-node@10.9.2(@types/node@20.19.40)(typescript@5.9.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.3.0
@@ -15450,9 +15405,9 @@ snapshots:
     optionalDependencies:
       ioredis: 5.10.1
       mongodb: 6.20.0
-      mysql2: 3.22.3(@types/node@20.19.41)
+      mysql2: 3.22.3(@types/node@20.19.40)
       redis: 4.7.1
-      ts-node: 10.9.2(@types/node@20.19.41)(typescript@5.9.3)
+      ts-node: 10.9.2(@types/node@20.19.40)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -15533,18 +15488,18 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss-preset-grid@1.6.5(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))):
+  unocss-preset-grid@1.6.5(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))):
     dependencies:
-      unocss: 0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      unocss: 0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
 
-  unocss-preset-scrollbar@0.3.1(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))):
+  unocss-preset-scrollbar@0.3.1(unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))):
     dependencies:
       '@unocss/preset-mini': 0.56.5
-      unocss: 0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      unocss: 0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
 
-  unocss@0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  unocss@0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
-      '@unocss/astro': 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@unocss/astro': 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       '@unocss/cli': 0.47.6(rollup@3.30.0)
       '@unocss/core': 0.47.6
       '@unocss/preset-attributify': 0.47.6
@@ -15560,15 +15515,15 @@ snapshots:
       '@unocss/transformer-compile-class': 0.47.6
       '@unocss/transformer-directives': 0.47.6
       '@unocss/transformer-variant-group': 0.47.6
-      '@unocss/vite': 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@unocss/vite': 0.47.6(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     transitivePeerDependencies:
       - rollup
       - supports-color
       - vite
 
-  unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  unocss@0.58.9(postcss@8.5.14)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
-      '@unocss/astro': 0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@unocss/astro': 0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       '@unocss/cli': 0.58.9(rollup@3.30.0)
       '@unocss/core': 0.58.9
       '@unocss/extractor-arbitrary-variants': 0.58.9
@@ -15587,9 +15542,9 @@ snapshots:
       '@unocss/transformer-compile-class': 0.58.9
       '@unocss/transformer-directives': 0.58.9
       '@unocss/transformer-variant-group': 0.58.9
-      '@unocss/vite': 0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@unocss/vite': 0.58.9(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
     optionalDependencies:
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -15633,7 +15588,7 @@ snapshots:
       - rollup
       - supports-color
 
-  unplugin-vue-markdown@0.26.3(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  unplugin-vue-markdown@0.26.3(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
       '@mdit-vue/plugin-component': 2.1.4
       '@mdit-vue/plugin-frontmatter': 2.1.4
@@ -15642,7 +15597,7 @@ snapshots:
       '@types/markdown-it': 14.1.2
       markdown-it: 14.1.1
       unplugin: 1.16.1
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - rollup
 
@@ -15757,7 +15712,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plugin-inspect@0.8.9(@nuxt/kit@3.21.5)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  vite-plugin-inspect@0.8.9(@nuxt/kit@3.21.5)(rollup@3.30.0)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.3.0(rollup@3.30.0)
@@ -15768,21 +15723,21 @@ snapshots:
       perfect-debounce: 1.0.0
       picocolors: 1.1.1
       sirv: 3.0.2
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     optionalDependencies:
       '@nuxt/kit': 3.21.5
     transitivePeerDependencies:
       - rollup
       - supports-color
 
-  vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  vite-plugin-md@0.21.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
-      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       '@yankeeinlondon/gray-matter': 6.2.1(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)
       '@yankeeinlondon/happy-wrapper': 2.10.1(sass@1.99.0)(terser@5.47.1)
       markdown-it: 13.0.2
       source-map-js: 1.2.1
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitejs/plugin-vue'
@@ -15799,15 +15754,15 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-md@0.22.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)):
+  vite-plugin-md@0.22.5(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)):
     dependencies:
-      '@vitejs/plugin-vue': 4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3))
-      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))
+      '@vitejs/plugin-vue': 4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3))
+      '@yankeeinlondon/builder-api': 1.4.1(@vitejs/plugin-vue@4.6.2(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue@3.5.34(typescript@5.9.3)))(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))
       '@yankeeinlondon/gray-matter': 6.2.1(happy-dom@8.9.0)(sass@1.99.0)(terser@5.47.1)
       '@yankeeinlondon/happy-wrapper': 2.10.1(sass@1.99.0)(terser@5.47.1)
       markdown-it: 13.0.2
       source-map-js: 1.2.1
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitest/browser'
@@ -15822,23 +15777,23 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-vue-layouts@0.11.0(vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3)):
+  vite-plugin-vue-layouts@0.11.0(vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3)):
     dependencies:
       debug: 4.4.3
       fast-glob: 3.3.3
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
       vue: 3.5.34(typescript@5.9.3)
       vue-router: 4.6.4(vue@3.5.34(typescript@5.9.3))
     transitivePeerDependencies:
       - supports-color
 
-  vite@4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1):
+  vite@4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.5.14
       rollup: 3.30.0
     optionalDependencies:
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       fsevents: 2.3.3
       sass: 1.99.0
       terser: 5.47.1
@@ -15847,7 +15802,7 @@ snapshots:
     dependencies:
       '@types/chai': 4.3.20
       '@types/chai-subset': 1.3.6(@types/chai@4.3.20)
-      '@types/node': 20.19.41
+      '@types/node': 20.19.40
       acorn: 8.16.0
       acorn-walk: 8.3.5
       chai: 4.5.0
@@ -15858,7 +15813,7 @@ snapshots:
       tinybench: 2.9.0
       tinypool: 0.3.1
       tinyspy: 1.1.1
-      vite: 4.5.14(@types/node@20.19.41)(sass@1.99.0)(terser@5.47.1)
+      vite: 4.5.14(@types/node@20.19.40)(sass@1.99.0)(terser@5.47.1)
     optionalDependencies:
       happy-dom: 8.9.0
     transitivePeerDependencies:

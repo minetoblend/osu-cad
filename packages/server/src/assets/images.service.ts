@@ -16,7 +16,7 @@ export class ImagesService {
 
     const body = new FormData();
     body.append('id', id);
-    body.append('file', new Blob([buffer]), filename);
+    body.append('file', new Blob([new Uint8Array(buffer)]), filename);
     body.append('metadata', JSON.stringify(metadata));
 
     let url = `https://api.cloudflare.com/client/v4/accounts/${this.configService.getOrThrow('CLOUDFLARE_ACCOUNT_ID')}/images/v1`;
