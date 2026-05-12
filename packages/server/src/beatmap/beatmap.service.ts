@@ -84,6 +84,7 @@ export class BeatmapService implements OnModuleInit {
         'lastAccess',
         'beatmap.id = lastAccess.beatmapId and lastAccess.userId = :userId',
       )
+      .addSelect('lastAccess.date', 'lastAccess_date')
       .innerJoinAndSelect('beatmap.mapset', 'mapset')
       .innerJoinAndSelect('mapset.creator', 'creator')
       .andWhere('beatmap.deleted = false');
