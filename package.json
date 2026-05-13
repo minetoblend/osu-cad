@@ -28,7 +28,7 @@
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-storybook": "10.3.6",
-    "jiti": "2.4.2",
+    "jiti": "2.7.0",
     "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
     "nx": "22.7.1",
