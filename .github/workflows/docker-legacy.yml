@@ -27,7 +27,7 @@ jobs:
 
       - name: Docker Client Meta
         id: meta-client
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CLIENT }}
           tags: |
@@ -70,7 +70,7 @@ jobs:
 
       - name: Docker Server Meta
         id: meta-server
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
           tags: |
