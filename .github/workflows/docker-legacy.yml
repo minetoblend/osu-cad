@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push client
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           file: Dockerfile
           context: .
@@ -80,7 +80,7 @@ jobs:
             type=sha,prefix=
 
       - name: Build and push server
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           file: Dockerfile
           context: .
