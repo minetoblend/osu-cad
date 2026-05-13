@@ -139,8 +139,8 @@ importers:
         version: 8.18.1
     devDependencies:
       vite-plugin-conditional-compiler:
-        specifier: ^0.3.1
-        version: 0.3.1(vite@7.3.3)(webpack@5.106.2)
+        specifier: ^0.4.0
+        version: 0.4.0(vite@7.3.3)(webpack@5.106.2)
 
   apps/editor-web:
     dependencies:
@@ -164,8 +164,8 @@ importers:
         version: 8.18.1
     devDependencies:
       vite-plugin-conditional-compiler:
-        specifier: ^0.3.1
-        version: 0.3.1(vite@7.3.3)(webpack@5.106.2)
+        specifier: ^0.4.0
+        version: 0.4.0(vite@7.3.3)(webpack@5.106.2)
 
   apps/skinning-demo:
     dependencies:
@@ -183,8 +183,8 @@ importers:
         version: 8.18.1
     devDependencies:
       vite-plugin-conditional-compiler:
-        specifier: ^0.3.1
-        version: 0.3.1(vite@7.3.3)(webpack@5.106.2)
+        specifier: ^0.4.0
+        version: 0.4.0(vite@7.3.3)(webpack@5.106.2)
 
   multiplayer/core:
     dependencies:
@@ -261,8 +261,8 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
       vite-plugin-conditional-compiler:
-        specifier: ^0.3.1
-        version: 0.3.1(vite@7.3.3)(webpack@5.106.2)
+        specifier: ^0.4.0
+        version: 0.4.0(vite@7.3.3)(webpack@5.106.2)
 
   packages/multiplayer:
     dependencies:
@@ -6056,11 +6056,16 @@ packages:
     resolution: {integrity: sha512-uc47g4b+4k/M/SeaW1y4OApx+mtLWl92l5LMPP0GNXctZqELk+YGgOPIIC5elYmUH4OuoK3JLhuRUYegeySiFA==}
     engines: {node: '>=12'}
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.6.1
     dev: true
 
   /dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+    dev: true
+
+  /dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
     dev: true
 
@@ -10163,9 +10168,10 @@ packages:
       - supports-color
     dev: true
 
-  /unplugin-preprocessor-directives@1.0.3(vite@7.3.3)(webpack@5.106.2):
-    resolution: {integrity: sha512-l/ZZ7CpVSqzkG3v2zBl2DEur4sC+qUdHpc9TrKahXP+JbPCQYHKUgdCgFpbrM5hLLQqxoa9gVleIZJL/2Lk4Bg==}
+  /unplugin-preprocessor-directives@1.2.0(vite@7.3.3)(webpack@5.106.2):
+    resolution: {integrity: sha512-X0dWu9xFSSizkRa1f/o7sREWWMV1fvEc2IeXiirt5dS5BOiaI+V6KV/Uc8HCRffBa7TdZnRJ0YWiIBjkHzueeA==}
     peerDependencies:
+      '@farmfe/core': '>=1'
       '@nuxt/kit': ^3
       '@nuxt/schema': ^3
       '@rspack/core': '*'
@@ -10174,6 +10180,8 @@ packages:
       vite: '>=3'
       webpack: ^4 || ^5
     peerDependenciesMeta:
+      '@farmfe/core':
+        optional: true
       '@nuxt/kit':
         optional: true
       '@nuxt/schema':
@@ -10189,19 +10197,13 @@ packages:
       webpack:
         optional: true
     dependencies:
-      '@ampproject/remapping': 2.3.0
+      '@jridgewell/remapping': 2.3.5
+      dotenv-expand: 12.0.3
       magic-string: 0.30.21
-      unplugin: 1.16.1
+      picocolors: 1.1.1
+      unplugin: 2.3.11
       vite: 7.3.3(@types/node@25.6.2)(jiti@2.7.0)
       webpack: 5.106.2(@swc/core@1.15.8)
-    dev: true
-
-  /unplugin@1.16.1:
-    resolution: {integrity: sha512-4/u/j4FrCKdi17jaxuJA0jClGxB1AvU2hw/IuayPc4ay1XGaJs/rbb4v5WKwAjNifjmXK9PIFyuPiaK8azyR9w==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      acorn: 8.16.0
-      webpack-virtual-modules: 0.6.2
     dev: true
 
   /unplugin@2.3.11:
@@ -10428,12 +10430,13 @@ packages:
       - yaml
     dev: false
 
-  /vite-plugin-conditional-compiler@0.3.1(vite@7.3.3)(webpack@5.106.2):
-    resolution: {integrity: sha512-nsvK6U99PuiLpINEfgoX48Gxz4csnzrBELVl8L/swMd7OmQUxdyg2/x0rxH6Mzj+6EaCg0SAyz7W0OA0B6iaVA==}
+  /vite-plugin-conditional-compiler@0.4.0(vite@7.3.3)(webpack@5.106.2):
+    resolution: {integrity: sha512-m5K1JfWYznskcarnw/RKUdpQRfVfKeNnls8qa5QSKae2zO7Sb9lI0MbVBLtFVDMVfuCeomo9V3R60dEVTq0yQQ==}
     dependencies:
       '@ampproject/remapping': 2.3.0
-      unplugin-preprocessor-directives: 1.0.3(vite@7.3.3)(webpack@5.106.2)
+      unplugin-preprocessor-directives: 1.2.0(vite@7.3.3)(webpack@5.106.2)
     transitivePeerDependencies:
+      - '@farmfe/core'
       - '@nuxt/kit'
       - '@nuxt/schema'
       - '@rspack/core'
