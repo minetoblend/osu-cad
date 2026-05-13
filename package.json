@@ -26,7 +26,7 @@
     "@vitest/coverage-v8": "4.1.5",
     "@vitest/ui": "4.1.5",
     "eslint": "^10.3.0",
-    "eslint-config-prettier": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-storybook": "10.3.6",
     "jiti": "2.7.0",
     "jsdom": "~22.1.0",
