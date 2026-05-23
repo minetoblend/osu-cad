@@ -34,7 +34,7 @@
   "dependencies": {
     "@osucad/storybook-preset-vite": "workspace:^",
     "@osucad/storybook-renderer": "workspace:^",
-    "@storybook/builder-vite": "^10.0.0",
+    "@storybook/builder-vite": "^10.4.0",
     "@types/node": "^25.6.2",
     "@types/offscreencanvas": "^2019.7.0",
     "react": "19.2.6",
