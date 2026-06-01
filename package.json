@@ -32,7 +32,7 @@
     "jsonc-eslint-parser": "^3.1.0",
     "nx": "22.7.5",
     "storybook": "10.3.6",
-    "swc-loader": "0.1.15",
+    "swc-loader": "0.2.7",
     "ts-node": "10.9.2",
     "tslib": "^2.3.0",
     "typescript": "5.9.3",
