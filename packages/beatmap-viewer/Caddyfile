@@ -1,6 +1,8 @@
 :8081 {
   reverse_proxy /beatmaps/* https://assets.ppy.sh {
     header_up Host {upstream_hostport}
+    # The asset upstream routes unknown forwarded hosts to the avatar fallback.
+    header_up -X-Forwarded-Host
   }
   reverse_proxy /preview/* https://catboy.best {
     header_up Host {upstream_hostport}
