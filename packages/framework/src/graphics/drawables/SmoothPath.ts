@@ -34,7 +34,7 @@ export class SmoothPath extends Path {
       return;
 
     const textureWidth = Math.floor(this.pathRadius) * 2;
-    const raw = new Float32Array(textureWidth * 4);
+    const raw = new Uint8Array(textureWidth * 4);
     const aa_portion = 0.02;
 
     for (let i = 0; i < textureWidth; i++) {
@@ -42,17 +42,19 @@ export class SmoothPath extends Path {
 
       const { r, g, b, a } = new Color(this.colorAt(progress)).toRgba();
 
-      raw[i * 4] = r;
-      raw[i * 4 + 1] = g;
-      raw[i * 4 + 2] = b;
-      raw[i * 4 + 3] = a * Math.min(progress / aa_portion, 1);
+      raw[i * 4] = Math.round(r * 255);
+      raw[i * 4 + 1] = Math.round(g * 255);
+      raw[i * 4 + 2] = Math.round(b * 255);
+      raw[i * 4 + 3] = Math.round(a * Math.min(progress / aa_portion, 1) * 255);
     }
 
     const source = new BufferImageSource({
       resource: raw,
       width: textureWidth,
       height: 1,
-      format: 'rgba32float',
+      // Linear filtering of 32-bit float textures requires an optional WebGL extension.
+      format: 'rgba8unorm',
+      scaleMode: 'linear',
     });
 
     const prevTexture = this.texture;
