@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - beatmap-viewer
 jobs:
   lint:
     runs-on: ubuntu-latest
